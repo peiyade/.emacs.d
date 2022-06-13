@@ -1,0 +1,32 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /home/py06/.emacs.d/settings.org
+
+
+* Org
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-06-13 Mon 16:09
+:ARCHIVE_FILE: ~/.emacs.d/settings.org
+:ARCHIVE_OLPATH: Note taking
+:ARCHIVE_CATEGORY: settings
+:END:
+
+Hide leading stars
+#+begin_src emacs-lisp :tangle yes
+  (setq org-startup-indented t
+        org-hide-leading-stars t)
+#+end_src
+
+org-keywords
+
+#+begin_src emacs-lisp :tangle yes
+   (setq org-todo-keywords
+         '((sequence "TODO(t)" "FEEDBACK(f)" "VERIFY(v)" "|" "PROCESSING(p)")
+           (sequence "|" "DONE(d)" "CANCELED(c)")))
+#+end_src
+
+#+RESULTS:
+| sequence | TODO(t) | FEEDBACK(f) | VERIFY(v) |             |   | PROCESSING(p) |
+| sequence |         |             | DONE(d)   | CANCELED(c) |   |               |
+

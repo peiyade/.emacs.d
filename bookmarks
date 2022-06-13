@@ -1,0 +1,11 @@
+;;;; Emacs Bookmark Format Version 1;;;; -*- coding: utf-8-emacs; mode: lisp-data -*-
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("org-refile-last-stored"
+ (filename . "~/braindump/projects/emacs-twinker/org-mode.org")
+ (front-context-string . "** TODO Agenda: ")
+ (rear-context-string . "\n\n* test refile\n")
+ (position . 1013)
+ (last-modified 25254 61233 134639 765000))
+)
