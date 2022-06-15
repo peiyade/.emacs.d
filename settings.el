@@ -54,6 +54,8 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
+(cnfonts-mode 1)
+
 (add-to-list 'load-path "~/.emacs.d/lisp/avy")
 (require 'avy)
 
@@ -116,17 +118,21 @@
 
 (add-to-list 'load-path "~/.emacs.d/lisp/auctex")
 
-(add-to-list 'load-path "~/.emacs.d/lisp/doct/")
-(require 'doct)
-
-(add-to-list 'load-path "~/.emacs.d/lisp/org-protocol-capture-html/")
-(require 'org-protocol-capture-html)
-
 (setq org-hide-leading-stars t)
 (setq org-todo-keywords
       '((sequence "TODO(t)" "|" "DONE(d)")
         (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
         (sequence "|" "CANCELED(c)")))
+(setq org-refile-use-outline-path 'file
+      org-outline-path-complete-in-steps nil)
+(setq org-refile-allow-creating-parent-nodes 'confirm
+      org-refile-targets '(("projects.org" . (:level . 1))))
+
+(add-to-list 'load-path "~/.emacs.d/lisp/doct/")
+(require 'doct)
+
+(add-to-list 'load-path "~/.emacs.d/lisp/org-protocol-capture-html/")
+(require 'org-protocol-capture-html)
 
 (add-to-list 'load-path "~/.emacs.d/lisp/deft/")
 (require 'deft)

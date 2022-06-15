@@ -77,9 +77,9 @@
 
 ** CNFonts
 
-直接使用更莎黑体
-
-
+#+begin_src emacs-lisp :tangle yes
+(cnfonts-mode 1)
+#+end_src
 
 * Fundamental packages
 
@@ -201,10 +201,21 @@ Posframe
 
 
 
-
-
-
 * Note taking
+** Basic settings
+
+#+begin_src emacs-lisp :tangle yes
+(setq org-hide-leading-stars t)
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "|" "DONE(d)")
+        (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
+        (sequence "|" "CANCELED(c)")))
+(setq org-refile-use-outline-path 'file
+      org-outline-path-complete-in-steps nil)
+(setq org-refile-allow-creating-parent-nodes 'confirm
+      org-refile-targets '(("projects.org" . (:level . 1))))
+#+end_src
+
 ** Packages
 *** DOCT: Declarative Org Capture Templates for Emacs 
 #+begin_src emacs-lisp :tangle yes
@@ -219,21 +230,6 @@ Posframe
 
 #+RESULTS:
 : org-protocol-capture-html
-
-*** Basic settings
-
-#+begin_src emacs-lisp :tangle yes
-(setq org-hide-leading-stars t)
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "|" "DONE(d)")
-        (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
-        (sequence "|" "CANCELED(c)")))
-#+end_src
-
-#+RESULTS:
-| sequence | TODO(t)   |        |               | DONE(d) |   |          |
-| sequence | REPORT(r) | BUG(b) | KNOWNCAUSE(k) |         |   | FIXED(f) |
-| sequence |           |        | CANCELED(c)   |         |   |          |
 
 ** Deft
 
@@ -315,8 +311,6 @@ Posframe
 #+RESULTS:
 | i | inbox    | entry | (file pei/inbox-file) | * TODO %?      |
 | w | Web site | entry | (file pei/inbox-file) | * %a :website: |
-
-
 
 * Meow
 ** Meow mx basic keys

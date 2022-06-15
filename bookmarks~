@@ -4,8 +4,8 @@
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-refile-last-stored"
  (filename . "~/braindump/projects.org")
- (front-context-string . "* [[https://gith")
- (rear-context-string . "53b1d2][inbox]]\n")
- (position . 1253)
- (last-modified 25257 39235 650135 570000))
+ (front-context-string . "* TODO A task ma")
+ (rear-context-string)
+ (position . 1)
+ (last-modified 25257 24642 292525 614000))
 )
