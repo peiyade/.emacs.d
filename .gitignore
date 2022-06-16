@@ -1,5 +1,6 @@
 auto-save-list/*
 bookmark~
+bookmark
 *.el~
 recentf
 eln-cache/* 
