@@ -3,3 +3,5 @@ bookmark~
 *.el~
 recentf
 eln-cache/* 
+.org-id-locations
+auto-save-list/*
