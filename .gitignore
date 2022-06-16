@@ -1,3 +1,5 @@
-auto-save-list/
+auto-save-list/*
 bookmark~
 *.el~
+recentf
+eln-cache/* 
