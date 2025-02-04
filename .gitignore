@@ -1,0 +1,25 @@
+# --- Emacs 自动生成的临时文件 ---
+*~
+\#*\#
+.#*
+
+# --- 本地编译缓存 (Emacs 28+ 开启 native-comp 时生成) ---
+/.emacs.d/eln-cache/
+
+# --- 目录类 ---
+/.emacs.d/auto-save-list/
+/.emacs.d/elpa/
+/tmp/
+
+# --- 编译/缓存文件 ---
+*.elc
+.projectile
+/.projectile
+
+# --- 自定义持久化文件 ---
+.emacs.desktop
+.recentf
+
+# --- 系统文件 ---
+.DS_Store
+Thumbs.db
