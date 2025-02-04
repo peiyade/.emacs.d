@@ -4,7 +4,7 @@
 .#*
 
 # --- 本地编译缓存 (Emacs 28+ 开启 native-comp 时生成) ---
-/.emacs.d/eln-cache/
+/.emacs.d/eln-cache/*
 
 # --- 目录类 ---
 /.emacs.d/auto-save-list/
@@ -13,6 +13,7 @@
 
 # --- 编译/缓存文件 ---
 *.elc
+*.eln
 .projectile
 /.projectile
 
