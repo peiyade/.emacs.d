@@ -1,3 +1,16 @@
+(use-package avy
+  :ensure t
+  :config
+  (setq avy-background t)
+  (setq avy-style 'at-full)
+  (setq avy-all-windows t))
+
+;;(use-package ace-pinyin
+;;  :ensure t
+;;  :config
+;;  (setq ace-pinyin-use-avy t)
+;;  (ace-pinyin-global-mode t))
+
 (use-package which-key
   :ensure t
   :config
@@ -32,8 +45,8 @@
 ;; 加载package.el包管理系统
 (require 'package)
 ;; 如果包列表为空，则刷新包列表
-(unless package-archive-contents
-  (package-refresh-contents))
+;;(unless package-archive-contents
+;;  (package-refresh-contents))
 
 ;; 自动安装use-package包管理工具
 (unless (package-installed-p 'use-package)
@@ -154,6 +167,63 @@
   ;; 设置补全延迟时间
   (setq company-idle-delay 0.1))
 
+;; 配置vertico补全框架
+(use-package vertico
+  :init
+  (vertico-mode 1)
+  :custom
+  (vertico-count 10)
+  (vertico-resize t)
+  (vertico-cycle t))
+
+;; 配置orderless模糊匹配
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+
+;; 配置consult
+(use-package consult
+  :bind
+  (("C-s" . consult-line)
+   ("C-x b" . consult-buffer)
+   ("M-y" . consult-yank-pop)
+   ("M-g g" . consult-goto-line)
+   ("M-g M-g" . consult-goto-line)
+   ("M-g o" . consult-outline)
+   ("M-g m" . consult-mark)
+   ("M-g k" . consult-global-mark)
+   ("M-g i" . consult-imenu)
+   ("M-g I" . consult-imenu-multi)))
+
+;; 配置marginalia元数据展示
+(use-package marginalia
+  :init
+  (marginalia-mode 1))
+
+;; 配置embark动作系统
+(use-package embark
+  :bind
+  (("C-." . embark-act)
+   ("C-;" . embark-dwim)
+   ("C-h B" . embark-bindings))
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
+  :config
+  (use-package embark-consult
+    :after (embark consult)
+    :demand t
+    :hook
+    (embark-collect-mode . consult-preview-at-point-mode)))
+
+;; 优化M-x体验
+(use-package emacs
+  :bind
+  ([remap execute-extended-command] . consult-complex-command)
+  :config
+  (setq read-extended-command-predicate #'command-completion-default-include-p)
+  (setq enable-recursive-minibuffers t))
+
 ;; macOS特定配置
 (when (eq system-type 'darwin)
   ;; 设置Option键为Meta键
@@ -172,6 +242,12 @@
 (global-set-key (kbd "C-c a") 'org-agenda)      ;; 打开org议程
 (global-set-key (kbd "C-c c") 'org-capture)     ;; 快速捕获笔记
 (global-set-key (kbd "C-c b") 'org-switchb)     ;; 切换org缓冲区
+
+;; avy快捷键
+(global-set-key (kbd "M-g c") 'avy-goto-char)   ;; 跳转到字符
+(global-set-key (kbd "M-g C") 'avy-goto-char-2) ;; 跳转到两个字符组合
+(global-set-key (kbd "M-g w") 'avy-goto-word-1) ;; 跳转到单词
+(global-set-key (kbd "M-g l") 'avy-goto-line)   ;; 跳转到行
 
 ;; 性能优化配置
 ;; 设置垃圾回收阈值为50MB
