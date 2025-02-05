@@ -1,6 +1,24 @@
 #+TITLE: Emacs Configuration
 #+AUTHOR: Your Name
 
+* 快捷键配置
+** which-key设置
+#+BEGIN_SRC elisp
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode)
+  (setq which-key-idle-delay 0.3))
+#+END_SRC
+
+** 快捷键列表
+| 快捷键 | 功能描述           | 对应命令       |
+|--------+--------------------+----------------|
+| C-c l  | 存储org链接        | org-store-link |
+| C-c a  | 打开org议程        | org-agenda     |
+| C-c c  | 快速捕获笔记       | org-capture    |
+| C-c b  | 切换org缓冲区      | org-switchb    |
+
 * 基础设置
 ** 界面设置
 #+begin_src emacs-lisp
