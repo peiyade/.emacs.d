@@ -7,8 +7,8 @@
 /.emacs.d/eln-cache/*
 
 # --- 目录类 ---
-/.emacs.d/auto-save-list/
-/.emacs.d/elpa/
+/auto-save-list/
+/elpa/
 /tmp/
 
 # --- 编译/缓存文件 ---
