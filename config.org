@@ -2,6 +2,22 @@
 #+AUTHOR: Your Name
 
 * 快捷键配置
+** avy和ace-pinyin设置
+#+BEGIN_SRC elisp
+(use-package avy
+  :ensure t
+  :config
+  (setq avy-background t)
+  (setq avy-style 'at-full)
+  (setq avy-all-windows t))
+
+(use-package ace-pinyin
+  :ensure t
+  :config
+  (ace-pinyin-global-mode t)
+  (setq ace-pinyin-use-avy t))
+#+END_SRC
+
 ** which-key设置
 #+BEGIN_SRC elisp
 (use-package which-key
@@ -18,6 +34,10 @@
 | C-c a  | 打开org议程        | org-agenda     |
 | C-c c  | 快速捕获笔记       | org-capture    |
 | C-c b  | 切换org缓冲区      | org-switchb    |
+| M-g c  | 跳转到字符         | avy-goto-char  |
+| M-g C  | 跳转到两个字符组合 | avy-goto-char-2|
+| M-g w  | 跳转到单词         | avy-goto-word-1|
+| M-g l  | 跳转到行           | avy-goto-line  |
 
 * 基础设置
 ** 界面设置
@@ -230,6 +250,12 @@
 (global-set-key (kbd "C-c a") 'org-agenda)      ;; 打开org议程
 (global-set-key (kbd "C-c c") 'org-capture)     ;; 快速捕获笔记
 (global-set-key (kbd "C-c b") 'org-switchb)     ;; 切换org缓冲区
+
+;; avy快捷键
+(global-set-key (kbd "M-g c") 'avy-goto-char)   ;; 跳转到字符
+(global-set-key (kbd "M-g C") 'avy-goto-char-2) ;; 跳转到两个字符组合
+(global-set-key (kbd "M-g w") 'avy-goto-word-1) ;; 跳转到单词
+(global-set-key (kbd "M-g l") 'avy-goto-line)   ;; 跳转到行
 #+end_src
 
 * 性能优化
