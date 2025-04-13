@@ -130,7 +130,10 @@
   (add-hook 'pdf-view-mode-hook 'pdf-annot-minor-mode)
   
   ;; 启用 pdf-outline-minor-mode 以支持大纲功能
-  (add-hook 'pdf-view-mode-hook 'pdf-outline-minor-mode))
+  (add-hook 'pdf-view-mode-hook 'pdf-outline-minor-mode)
+  
+  ;; 启用 pdf-sync-minor-mode 以支持同步功能
+  (add-hook 'pdf-view-mode-hook 'pdf-sync-minor-mode))
 #+end_src
 
 ** Org 与 PDF 集成
@@ -150,3 +153,4 @@
         ("\\.x?html?\\'" . default)
         ("\\.pdf\\'" . "emacs %s")))
 #+end_src
+

@@ -91,7 +91,10 @@
   (add-hook 'pdf-view-mode-hook 'pdf-annot-minor-mode)
   
   ;; 启用 pdf-outline-minor-mode 以支持大纲功能
-  (add-hook 'pdf-view-mode-hook 'pdf-outline-minor-mode))
+  (add-hook 'pdf-view-mode-hook 'pdf-outline-minor-mode)
+  
+  ;; 启用 pdf-sync-minor-mode 以支持同步功能
+  (add-hook 'pdf-view-mode-hook 'pdf-sync-minor-mode))
 
 ;; 添加 PDF 到 Org Babel 支持的语言中
 (with-eval-after-load 'org

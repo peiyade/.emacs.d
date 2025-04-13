@@ -27,4 +27,7 @@ config.el
 *.elc
 
 # 自动生成的文档
-*.info
+*.infotest/
+
+# test 文档
+test/
