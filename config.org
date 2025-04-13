@@ -1,0 +1,91 @@
+#+TITLE: Emacs 配置
+#+AUTHOR: vitamin-k
+#+PROPERTY: header-args:emacs-lisp :tangle yes
+
+
+* 基础设置
+** 基本界面设置
+#+begin_src emacs-lisp
+;; 关闭启动画面
+(setq inhibit-startup-message t)
+
+;; 关闭工具栏、菜单栏、滚动条
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+#+end_src
+
+** 编码设置
+#+begin_src emacs-lisp
+;; 设置默认编码
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+#+end_src
+
+** 备份设置
+#+begin_src emacs-lisp
+;; 备份文件设置
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
+#+end_src
+
+* 包管理
+** 使用 Git Submodule 管理包
+#+begin_src emacs-lisp
+;; 添加 load-path
+(let ((default-directory "~/.emacs.d/site-lisp/"))
+  (normal-top-level-add-subdirs-to-load-path))
+
+;; 加载 use-package (假设已通过 git submodule 添加)
+(require 'use-package)
+
+;; 不需要确保包已安装，因为我们使用 git submodule
+(setq use-package-always-ensure nil)
+#+end_src
+
+** use-package 安装
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/site-lisp/use-package")
+(require 'use-package)
+
+(with-eval-after-load 'info
+  (info-initialize)
+  (add-to-list 'Info-directory-list
+               "~/.emacs.d/site-lisp/use-package/"))
+#+end_src
+
+* org-mode
+** org-mode 安装
+#+begin_src emacs-lisp
+(use-package org
+  :load-path "~/.emacs.d/site-lisp/org-mode/lisp/"
+  :config
+  (setq org-ellipsis " ▾")
+  (setq org-hide-emphasis-markers t))
+#+end_src
+
+** Org ID Settings
+#+begin_src emacs-lisp
+(require 'org-id)
+#+end_src
+
+** Org Babel 设置
+#+begin_src emacs-lisp
+;; 设置 Org Babel 支持的语言
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (shell . t)))
+
+;; 自动生成 config.el
+(defun tangle-config-org ()
+  "Tangle config.org on save."
+  (when (equal (buffer-file-name) 
+               (expand-file-name "~/.emacs.d/config.org"))
+    (org-babel-tangle)))
+
+(add-hook 'after-save-hook 'tangle-config-org)
+#+end_src
+
