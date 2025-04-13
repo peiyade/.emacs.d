@@ -1,0 +1,30 @@
+# Emacs临时文件
+*~
+\#*\#
+.\#*
+
+# 自动保存文件
+auto-save-list/
+
+# 备份文件
+backups/
+
+# 自动生成的配置文件
+config.el
+
+# 包管理相关
+/elpa/
+/quelpa/
+
+# 项目本地变量
+.dir-locals.el
+
+# 网络缓存
+/url/
+/network-security.data
+
+# 自定义编译输出
+*.elc
+
+# 自动生成的文档
+*.info

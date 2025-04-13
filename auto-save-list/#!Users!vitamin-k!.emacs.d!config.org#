@@ -6,13 +6,13 @@
 * 基础设置
 ** 基本界面设置
 #+begin_src emacs-lisp
-;; 关闭启动画面
-(setq inhibit-startup-message t)
+  ;; 关闭启动画面
+  (setq inhibit-startup-message t)
 
-;; 关闭工具栏、菜单栏、滚动条
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
+  ;; 关闭工具栏、菜单栏、滚动条
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
 #+end_src
 
 ** 编码设置
