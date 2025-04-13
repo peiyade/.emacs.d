@@ -88,3 +88,65 @@
 
 (add-hook 'after-save-hook 'tangle-config-org)
 #+end_src
+
+* PDF 工具
+** 前置配置
+#+begin_src emacs-lisp  
+(use-package pdf-occur
+    :commands (pdf-occur-global-minor-mode))
+  (use-package pdf-history
+    :commands (pdf-history-minor-mode))
+  (use-package pdf-links
+    :commands (pdf-links-minor-mode))
+  (use-package pdf-outline
+    :commands (pdf-outline-minor-mode))
+  (use-package pdf-annot
+    :commands (pdf-annot-minor-mode))
+  (use-package pdf-sync
+    :commands (pdf-sync-minor-mode))
+#+end_src
+#+begin_src emacs-lisp
+(use-package tablist
+  :load-path "~/.emacs.d/site-lisp/tablist")
+#+end_src
+
+** PDF-Tools 配置
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :load-path "~/.emacs.d/site-lisp/pdf-tools/lisp/"
+  :magic ("%PDF" . pdf-view-mode)
+  :config
+  ;; 初始化 pdf-tools
+  (pdf-tools-install)
+  
+  ;; 使用 pdf-tools 打开 PDF 文件
+  (setq-default pdf-view-display-size 'fit-page)
+  
+  ;; 禁用 pdf-view-mode 中的行号显示
+  (add-hook 'pdf-view-mode-hook (lambda () 
+                                  (display-line-numbers-mode -1)))
+  
+  ;; 启用 pdf-annot-minor-mode 以支持注释功能
+  (add-hook 'pdf-view-mode-hook 'pdf-annot-minor-mode)
+  
+  ;; 启用 pdf-outline-minor-mode 以支持大纲功能
+  (add-hook 'pdf-view-mode-hook 'pdf-outline-minor-mode))
+#+end_src
+
+** Org 与 PDF 集成
+#+begin_src emacs-lisp
+;; 添加 PDF 到 Org Babel 支持的语言中
+(with-eval-after-load 'org
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (shell . t)
+     (latex . t))))
+
+;; 设置 Org 导出 PDF 时使用 pdf-tools 打开
+(setq org-file-apps
+      '((auto-mode . emacs)
+        ("\\.mm\\'" . default)
+        ("\\.x?html?\\'" . default)
+        ("\\.pdf\\'" . "emacs %s")))
+#+end_src
