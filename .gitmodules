@@ -79,3 +79,21 @@
 [submodule "site-lisp/emacs-request"]
 	path = site-lisp/emacs-request
 	url = https://github.com/tkf/emacs-request.git
+[submodule "site-lisp/vertico"]
+	path = site-lisp/vertico
+	url = https://github.com/minad/vertico.git
+[submodule "site-lisp/consult"]
+	path = site-lisp/consult
+	url = https://github.com/minad/consult.git
+[submodule "site-lisp/orderless"]
+	path = site-lisp/orderless
+	url = https://github.com/oantolin/orderless.git
+[submodule "site-lisp/meow"]
+	path = site-lisp/meow
+	url = https://github.com/meow-edit/meow.git
+[submodule "site-lisp/ace-pinyin"]
+	path = site-lisp/ace-pinyin
+	url = https://github.com/cute-jumper/ace-pinyin.git
+[submodule "site-lisp/pinyinlib.el"]
+	path = site-lisp/pinyinlib.el
+	url = https://github.com/cute-jumper/pinyinlib.el.git
