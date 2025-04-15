@@ -13,3 +13,69 @@
 [submodule "site-lisp/auctex"]
 	path = site-lisp/auctex
 	url = https://git.savannah.gnu.org/git/auctex.git
+[submodule "site-lisp/org-roam"]
+	path = site-lisp/org-roam
+	url = https://github.com/org-roam/org-roam.git
+[submodule "site-lisp/org-roam-ui"]
+	path = site-lisp/org-roam-ui
+	url = https://github.com/org-roam/org-roam-ui
+[submodule "site-lisp/org-ai"]
+	path = site-lisp/org-ai
+	url = https://github.com/rksm/org-ai.git
+[submodule "site-lisp/cdlatex"]
+	path = site-lisp/cdlatex
+	url = https://github.com/cdominik/cdlatex
+[submodule "site-lisp/org-ref"]
+	path = site-lisp/org-ref
+	url = https://github.com/jkitchin/org-ref
+[submodule "site-lisp/hydra"]
+	path = site-lisp/hydra
+	url = https://github.com/abo-abo/hydra
+[submodule "site-lisp/dash.el"]
+	path = site-lisp/dash.el
+	url = https://github.com/magnars/dash.el.git
+[submodule "site-lisp/emacs-websocket"]
+	path = site-lisp/emacs-websocket
+	url = https://github.com/ahyatt/emacs-websocket.git
+[submodule "site-lisp/f.el"]
+	path = site-lisp/f.el
+	url = https://github.com/rejeep/f.el.git
+[submodule "site-lisp/s.el"]
+	path = site-lisp/s.el
+	url = https://github.com/magnars/s.el
+[submodule "site-lisp/parsebib"]
+	path = site-lisp/parsebib
+	url = https://github.com/joostkremers/parsebib.git
+[submodule "site-lisp/helm-bibtex"]
+	path = site-lisp/helm-bibtex
+	url = https://github.com/tmalsburg/helm-bibtex.git
+[submodule "site-lisp/helm"]
+	path = site-lisp/helm
+	url = https://github.com/emacs-helm/helm.git
+[submodule "site-lisp/emacs-async"]
+	path = site-lisp/emacs-async
+	url = https://github.com/jwiegley/emacs-async.git
+[submodule "site-lisp/biblio.el"]
+	path = site-lisp/biblio.el
+	url = https://github.com/cpitclaudel/biblio.el.git
+[submodule "site-lisp/ox-pandoc"]
+	path = site-lisp/ox-pandoc
+	url = https://github.com/kawabata/ox-pandoc.git
+[submodule "site-lisp/ht.el"]
+	path = site-lisp/ht.el
+	url = https://github.com/Wilfred/ht.el.git
+[submodule "site-lisp/citeproc-el"]
+	path = site-lisp/citeproc-el
+	url = https://github.com/andras-simonyi/citeproc-el.git
+[submodule "site-lisp/queue"]
+	path = site-lisp/queue
+	url = https://github.com/emacs-straight/queue.git
+[submodule "site-lisp/compat"]
+	path = site-lisp/compat
+	url = https://github.com/emacs-compat/compat.git
+[submodule "site-lisp/avy"]
+	path = site-lisp/avy
+	url = https://github.com/abo-abo/avy.git
+[submodule "site-lisp/emacs-request"]
+	path = site-lisp/emacs-request
+	url = https://github.com/tkf/emacs-request.git
