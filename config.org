@@ -173,3 +173,332 @@
         ("\\.pdf\\'" . "emacs %s")))
 #+end_src
 
+* 数学研究笔记系统
+** Org-Roam 配置
+#+begin_src emacs-lisp
+;; Org-Roam 配置
+(use-package org-roam
+  :load-path "~/.emacs.d/site-lisp/org-roam"
+  :custom
+  (org-roam-directory (file-truename "~/org-roam"))
+  (org-roam-completion-everywhere t)
+  (org-roam-capture-templates
+   '(("d" "默认" plain
+      "%?" :target
+      (file+head "${slug}.org" "#+title: ${title}\n")
+      :unnarrowed t)
+     ("m" "数学概念" plain
+      "* 定义\n%?\n\n* 性质\n\n* 例子\n\n* 相关概念\n\n* 参考文献\n"
+      :target (file+head "math/${slug}.org"
+                        "#+title: ${title}\n#+filetags: :math:concept:\n")
+      :unnarrowed t)
+     ("t" "定理" plain
+      "* 陈述\n%?\n\n* 证明\n\n* 推论\n\n* 应用\n\n* 参考文献\n"
+      :target (file+head "math/theorems/${slug}.org"
+                        "#+title: ${title}\n#+filetags: :math:theorem:\n")
+      :unnarrowed t)
+     ("p" "PDE问题" plain
+      "* 问题描述\n%?\n\n* 边界条件\n\n* 解法思路\n\n* 解的性质\n\n* 相关文献\n"
+      :target (file+head "math/pde/${slug}.org"
+                        "#+title: ${title}\n#+filetags: :math:pde:\n")
+      :unnarrowed t)
+     ("r" "研究笔记" plain
+      "* 研究问题\n%?\n\n* 相关工作\n\n* 方法\n\n* 结果\n\n* 下一步计划\n"
+      :target (file+head "research/${slug}.org"
+                        "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :research:\n")
+      :unnarrowed t)))
+  :bind ((:map global-map
+          ("C-c n f" . org-roam-node-find)
+          ("C-c n i" . org-roam-node-insert)
+          ("C-c n c" . org-roam-capture)
+          ("C-c n l" . org-roam-buffer-toggle))
+         (:map org-mode-map
+          ("C-M-i" . completion-at-point)))
+  :config
+  ;; 配置org-roam-ui
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t)
+  
+  ;; 创建必要的目录
+  (unless (file-exists-p org-roam-directory)
+    (make-directory org-roam-directory t))
+  (unless (file-exists-p (expand-file-name "math" org-roam-directory))
+    (make-directory (expand-file-name "math" org-roam-directory) t))
+  (unless (file-exists-p (expand-file-name "math/theorems" org-roam-directory))
+    (make-directory (expand-file-name "math/theorems" org-roam-directory) t))
+  (unless (file-exists-p (expand-file-name "math/pde" org-roam-directory))
+    (make-directory (expand-file-name "math/pde" org-roam-directory) t))
+  (unless (file-exists-p (expand-file-name "research" org-roam-directory))
+    (make-directory (expand-file-name "research" org-roam-directory) t))
+  
+  ;; 启动org-roam
+  (org-roam-db-autosync-mode))
+
+;; Org-Roam-UI配置
+(use-package org-roam-ui
+  :load-path "~/.emacs.d/site-lisp/org-roam-ui"
+  :after org-roam
+  :config
+  (setq org-roam-ui-browser-function #'browse-url-default-browser))
+#+end_src
+
+** LaTeX 和数学公式增强
+#+begin_src emacs-lisp
+;; LaTeX 和数学公式输入增强
+(use-package cdlatex
+  :load-path "~/.emacs.d/site-lisp/cdlatex"
+  :hook (org-mode . org-cdlatex-mode)
+  :config
+  ;; 自定义数学符号输入
+  (setq cdlatex-math-symbol-alist
+        '(("p" "\\partial" "\\partial")
+          ("e" "\\varepsilon" "\\epsilon")
+          ("d" "\\delta" "\\Delta")
+          ("l" "\\lambda" "\\Lambda")
+          ("g" "\\gamma" "\\Gamma")
+          ("o" "\\omega" "\\Omega")
+          ("u" "\\nabla" nil)
+          ("s" "\\sigma" "\\Sigma")
+          ("i" "\\int\\limits_{-\\infty}^{\\infty}" nil)
+          ("8" "\\infty" nil)
+          ("I" "\\oint" nil)
+          ("*" "\\times" nil)
+          ("." "\\cdot" nil)
+          ("<" "\\langle" nil)
+          (">" "\\rangle" nil)
+          ("~" "\\tilde" nil)
+          ("^" "\\hat" nil)
+          ("/" "\\frac{?}{}"))
+        cdlatex-math-modify-alist
+        '(("b" "\\mathbf" nil t nil nil)
+          ("c" "\\mathcal" nil t nil nil)
+          ("B" "\\boldsymbol" nil t nil nil)
+          ("r" "\\mathrm" nil t nil nil)
+          ("v" "\\vec" nil t nil nil)))
+  
+  ;; 自定义环境模板
+  (setq cdlatex-env-alist
+        '(("eqn" "\\begin{equation}
+?\\end{equation}"
+           nil)
+          ("ali" "\\begin{align}
+?\\end{align}"
+           nil)
+          ("gat" "\\begin{gather}
+?\\end{gather}"
+           nil)
+          ("thm" "\\begin{theorem}
+?\\end{theorem}"
+           nil)
+          ("lem" "\\begin{lemma}
+?\\end{lemma}"
+           nil)
+          ("prf" "\\begin{proof}
+?\\end{proof}"
+           nil)
+          ("def" "\\begin{definition}
+?\\end{definition}"
+           nil)
+          ("prop" "\\begin{proposition}
+?\\end{proposition}"
+           nil))))
+
+;; 配置org-ref用于文献管理
+
+(use-package compat
+  :load-path "~/.emacs.d/site-lisp/compat")
+
+(use-package dash
+  :load-path "~/.emacs.d/site-lisp/dash.el")
+
+(use-package websocket
+  :load-path "~/.emacs.d/site-lisp/emacs-websocket")
+
+(use-package f
+  :load-path "~/.emacs.d/site-lisp/f.el")
+
+(use-package s
+  :load-path "~/.emacs.d/site-lisp/s.el")
+
+(use-package parsebib
+  :load-path "~/.emacs.d/site-lisp/parsebib")
+
+(use-package async
+  :load-path "~/.emacs.d/site-lisp/emacs-async")
+
+(use-package biblio
+  :load-path "~/.emacs.d/site-lisp/biblio.el")
+
+(use-package ox-pandoc
+  :load-path "~/.emacs.d/site-lisp/ox-pandoc")
+
+(use-package ht
+  :load-path "~/.emacs.d/site-lisp/ht.el")
+
+(use-package citeproc
+  :load-path "~/.emacs.d/site-lisp/citeproc-el")
+
+(use-package queue
+  :load-path "~/.emacs.d/site-lisp/queue")
+
+(use-package avy
+  :load-path "~/.emacs.d/site-lisp/avy")
+
+(use-package request
+  :load-path "~/.emacs.d/site-lisp/emacs-request")
+
+(use-package helm
+  :load-path "~/.emacs.d/site-lisp/helm")
+
+(use-package helm-bibtex
+  :load-path "~/.emacs.d/site-lisp/helm-bibtex"
+  :after (helm))
+
+
+
+(use-package org-ref
+  :load-path "~/.emacs.d/site-lisp/org-ref"
+  :after (org dash f s parsebib helm-bibtex)
+  :config
+  (setq org-ref-default-bibliography '("~/org-roam/bibliography/references.bib")
+        org-ref-pdf-directory "~/org-roam/bibliography/pdfs/"
+        org-ref-notes-directory "~/org-roam/bibliography/notes/")
+  
+  ;; 创建必要的目录
+  (unless (file-exists-p "~/org-roam/bibliography")
+    (make-directory "~/org-roam/bibliography" t))
+  (unless (file-exists-p org-ref-pdf-directory)
+    (make-directory org-ref-pdf-directory t))
+  (unless (file-exists-p org-ref-notes-directory)
+    (make-directory org-ref-notes-directory t))
+  
+  ;; 设置引用格式
+  (setq org-ref-completion-library 'org-ref-ivy-cite
+        org-export-latex-format-toc-function 'org-export-latex-no-toc
+        org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
+        org-ref-note-title-format "* %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :AUTHOR: %a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"))
+#+end_src
+
+** AI 辅助工具
+#+begin_src emacs-lisp
+;; 配置org-ai与大模型集成
+(use-package org-ai
+  :load-path "~/.emacs.d/site-lisp/org-ai"
+  :after (org websocket)
+  :custom
+  ;; DeepSeek配置
+  (org-ai-default-chat-model "deepseek")
+  (org-ai-deepseek-api-key (getenv "DEEPSEEK_API_KEY"))
+  (org-ai-deepseek-api-base-url "https://api.deepseek.com/v1")
+  
+  ;; 其他模型配置
+  (org-ai-openai-api-key (getenv "OPENAI_API_KEY"))
+  (org-ai-anthropic-api-key (getenv "ANTHROPIC_API_KEY"))
+  
+  ;; 提示模板
+  (org-ai-prompt-templates
+   '(("math-explain" . "请详细解释以下数学概念或定理：\n\n$x")
+     ("math-proof" . "请提供以下定理的详细证明：\n\n$x")
+     ("math-example" . "请提供一个关于$x的具体例子，并详细解释")
+     ("pde-solve" . "请解决以下偏微分方程问题并详细说明解法步骤：\n\n$x")
+     ("latex-fix" . "请修正以下LaTeX代码中的错误：\n\n$x")
+     ("summarize-paper" . "请总结以下研究论文的主要内容、方法和贡献：\n\n$x")))
+  
+  :config
+  ;; 启用org-ai功能
+  (org-ai-global-mode)
+  
+  ;; 自定义函数：快速插入数学解释
+  (defun my/org-ai-math-explain ()
+    "使用AI解释选中的数学内容"
+    (interactive)
+    (if (use-region-p)
+        (let ((content (buffer-substring-no-properties (region-beginning) (region-end))))
+          (deactivate-mark)
+          (insert (format "\n** AI解释\n#+begin_ai\n请详细解释以下数学概念或定理：\n\n%s\n#+end_ai\n" content)))
+      (message "请先选择要解释的数学内容")))
+  
+  ;; 自定义函数：快速生成证明
+  (defun my/org-ai-math-proof ()
+    "使用AI生成选中定理的证明"
+    (interactive)
+    (if (use-region-p)
+        (let ((content (buffer-substring-no-properties (region-beginning) (region-end))))
+          (deactivate-mark)
+          (insert (format "\n** AI证明\n#+begin_ai\n请提供以下定理的详细证明：\n\n%s\n#+end_ai\n" content)))
+      (message "请先选择要证明的定理")))
+  
+  ;; 自定义函数：PDE求解辅助
+  (defun my/org-ai-pde-solve ()
+    "使用AI辅助解决PDE问题"
+    (interactive)
+    (if (use-region-p)
+        (let ((content (buffer-substring-no-properties (region-beginning) (region-end))))
+          (deactivate-mark)
+          (insert (format "\n** AI求解\n#+begin_ai\n请解决以下偏微分方程问题并详细说明解法步骤：\n\n%s\n#+end_ai\n" content)))
+      (message "请先选择要求解的PDE问题")))
+  
+  ;; 绑定快捷键
+  (global-set-key (kbd "C-c a e") 'my/org-ai-math-explain)
+  (global-set-key (kbd "C-c a p") 'my/org-ai-math-proof)
+  (global-set-key (kbd "C-c a s") 'my/org-ai-pde-solve)
+  (global-set-key (kbd "C-c a i") 'org-ai-prompt)
+  (global-set-key (kbd "C-c a c") 'org-ai-chat))
+#+end_src
+
+** 快捷键优化
+#+begin_src emacs-lisp
+;; 数学研究相关快捷键优化
+(use-package hydra
+  :load-path "~/.emacs.d/site-lisp/hydra"
+  :config
+  ;; 创建数学笔记相关操作的hydra菜单
+  (defhydra hydra-math-notes (:color blue :hint nil)
+    "
+^笔记操作^          ^公式^              ^引用^           ^AI辅助^
+^^^^^^^^-----------------------------------------------------------------
+_f_: 查找笔记      _e_: 编辑公式      _c_: 插入引用    _E_: AI解释
+_i_: 插入链接      _n_: 新公式块      _b_: 打开文献    _P_: AI证明
+_t_: 添加标签      _a_: 对齐环境      _r_: 刷新文献    _S_: AI求解PDE
+_d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
+"
+    ("f" org-roam-node-find)
+    ("i" org-roam-node-insert)
+    ("t" org-roam-tag-add)
+    ("d" (org-roam-capture- :node (org-roam-node-create) :templates '(("d" "默认" plain "%?" :target (file+head "${slug}.org" "#+title: ${title}\n") :unnarrowed t))))
+    ("e" org-cdlatex-environment)
+    ("n" (lambda () (interactive) (insert "\\begin{equation}\n\n\\end{equation}") (forward-line -1)))
+    ("a" (lambda () (interactive) (insert "\\begin{align}\n\n\\end{align}") (forward-line -1)))
+    ("s" cdlatex-math-symbol)
+    ("c" org-ref-cite-insert-ivy)
+    ("b" org-ref-open-bibtex-notes)
+    ("r" org-ref-bibliography-refresh)
+    ("p" org-latex-preview)
+    ("E" my/org-ai-math-explain)
+    ("P" my/org-ai-math-proof)
+    ("S" my/org-ai-pde-solve)
+    ("C" org-ai-chat)
+    ("q" nil "退出" :color blue))
+  
+  ;; 绑定全局快捷键
+  (global-set-key (kbd "C-c m") 'hydra-math-notes/body))
+
+;; 配置org-capture模板
+(with-eval-after-load 'org
+  (setq org-capture-templates
+        '(("t" "待办事项" entry
+           (file+headline "~/org-roam/gtd.org" "Tasks")
+           "* TODO %?\n  %i\n  %a")
+          ("n" "研究笔记" entry
+           (file+headline "~/org-roam/research_notes.org" "Notes")
+           "* %?\n  %U\n  %i")
+          ("j" "研究日志" entry
+           (file+datetree "~/org-roam/research_journal.org")
+           "* %?\n  %U\n  %i")
+          ("i" "研究想法" entry
+           (file+headline "~/org-roam/research_ideas.org" "Ideas")
+           "* %?\n  %U\n  %i"))))
+#+end_src
+
