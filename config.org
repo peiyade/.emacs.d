@@ -59,16 +59,35 @@
 * org-mode
 ** org-mode 安装
 #+begin_src emacs-lisp
+;; 使用 Emacs 内置的 org-mode
 (use-package org
-  :load-path "~/.emacs.d/site-lisp/org-mode/lisp/"
+  :ensure nil  ; 不需要安装，使用内置的
   :config
-  (setq org-ellipsis " ▾")
-  (setq org-hide-emphasis-markers t))
-#+end_src
+  ;; 美化设置
+  (setq org-ellipsis " ▾ ")
+  (setq org-hide-emphasis-markers t)
+  ;; 标题美化
+  (setq org-startup-indented t)
+  (setq org-indent-mode-turns-on-hiding-stars t)
+  ;; 设置不同级别标题的大小
+  (custom-set-faces
+   '(org-level-1 ((t (:inherit outline-1 :height 1.3))))
+   '(org-level-2 ((t (:inherit outline-2 :height 1.2))))
+   '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
+   '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
+   '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
+  
+  ;; 设置标题缩进
+  (setq org-indent-indentation-per-level 2))
 
-** Org ID Settings
-#+begin_src emacs-lisp
-(require 'org-id)
+;; 单独配置 org-id，确保在 org 加载后
+(use-package org-id
+  :after org
+  :ensure nil
+  :config
+  (setq org-id-method 'ts)  ; 使用时间戳方法
+  (setq org-id-track-globally t)
+  (setq org-id-locations-file "~/.emacs.d/.org-id-locations"))
 #+end_src
 
 ** Org Babel 设置
