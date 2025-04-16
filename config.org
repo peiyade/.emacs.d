@@ -90,6 +90,37 @@
   (marginalia-mode))
 #+end_src
 
+* File Management
+** Dired Sidebar Configuration
+#+begin_src emacs-lisp
+(use-package dired-sidebar
+  :load-path "~/.emacs.d/site-lisp/dired-sidebar"
+  :bind ("C-c t s" . dired-sidebar-toggle-sidebar)
+  :commands (dired-sidebar-toggle-sidebar)
+  :init
+  (add-hook 'dired-sidebar-mode-hook
+            (lambda ()
+              (unless (file-remote-p default-directory)
+                (auto-revert-mode))))
+  :config
+  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+  
+  (setq dired-sidebar-subtree-line-prefix "__")
+  (setq dired-sidebar-theme 'vscode)
+  (setq dired-sidebar-use-term-integration t)
+  (setq dired-sidebar-use-custom-font t))
+#+end_src
+
+** VSCode Icon Integration
+#+begin_src emacs-lisp
+(use-package vscode-icon
+  :load-path "~/.emacs.d/site-lisp/vscode-icon-emacs"
+  :commands (vscode-icon-for-file)
+  :config
+  (setq vscode-icon-size 24))
+#+end_src
+
 * Org Mode Configuration
 ** Basic Org Settings
 #+begin_src emacs-lisp

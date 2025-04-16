@@ -53,13 +53,40 @@
   (require 'marginalia)
   (marginalia-mode))
 
-(use-package org
-  :ensure nil
+(use-package dired-sidebar
+  :load-path "~/.emacs.d/site-lisp/dired-sidebar"
+  :bind ("C-c t s" . dired-sidebar-toggle-sidebar)
+  :commands (dired-sidebar-toggle-sidebar)
+  :init
+  (add-hook 'dired-sidebar-mode-hook
+            (lambda ()
+              (unless (file-remote-p default-directory)
+                (auto-revert-mode))))
   :config
-  (setq org-ellipsis " ▾ ")
+  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+  
+  (setq dired-sidebar-subtree-line-prefix "__")
+  (setq dired-sidebar-theme 'vscode)
+  (setq dired-sidebar-use-term-integration t)
+  (setq dired-sidebar-use-custom-font t))
+
+(use-package vscode-icon
+  :load-path "~/.emacs.d/site-lisp/vscode-icon-emacs"
+  :commands (vscode-icon-for-file)
+  :config
+  (setq vscode-icon-size 24))
+
+(use-package org
+  :ensure nil ;; Use the built-in Org package
+  :config
+  ;; Beautify Org Mode
+  (setq org-ellipsis " ▾ ") 
   (setq org-hide-emphasis-markers t)
+  ;; Indentation and folding on startup
   (setq org-startup-indented t)
   (setq org-indent-mode-turns-on-hiding-stars t)
+  ;; Fontification
   (custom-set-faces
    '(org-level-1 ((t (:inherit outline-1 :height 1.3))))
    '(org-level-2 ((t (:inherit outline-2 :height 1.2))))
@@ -67,6 +94,7 @@
    '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
    '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
   
+  ;; Indentation and folding
   (setq org-indent-indentation-per-level 2))
 
 (use-package org-id
