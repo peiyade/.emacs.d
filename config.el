@@ -448,6 +448,34 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
            (file+headline "~/org-roam/research_ideas.org" "Ideas")
            "* %?\n  %U\n  %i"))))
 
+(use-package perspective
+  :load-path "~/.emacs.d/site-lisp/perspective"
+  :init
+  (setq persp-state-default-file "~/.emacs.d/.emacs_perspectives") ; 保存会话文件的位置
+  (setq persp-mode-prefix-key (kbd "C-c p")) ; 设置前缀键为C-c p
+  (setq persp-suppress-no-prefix-key-warning t) ; 禁用无前缀键警告
+  
+  :config
+  (persp-mode 1)
+  
+  ;; 在模式栏显示当前perspective
+  (setq persp-show-modestring t)
+  (setq persp-modestring-short t)  ; 使用简短的模式栏显示
+  
+  ;; 定义快捷键 (使用与workgroups2相似的前缀)
+  (global-set-key (kbd "C-c w s") 'persp-switch)         ; 切换perspective
+  (global-set-key (kbd "C-c w c") 'persp-new)            ; 创建新perspective
+  (global-set-key (kbd "C-c w k") 'persp-kill)           ; 删除perspective
+  (global-set-key (kbd "C-c w r") 'persp-rename)         ; 重命名perspective
+  (global-set-key (kbd "C-c w a") 'persp-add-buffer)     ; 添加buffer到perspective
+  (global-set-key (kbd "C-c w b") 'persp-switch-to-buffer) ; 切换到perspective中的buffer
+  (global-set-key (kbd "C-c w S") 'persp-state-save)     ; 保存所有perspective状态
+  (global-set-key (kbd "C-c w L") 'persp-state-load)     ; 加载perspective状态
+  
+  ;; 创建目录（如果不存在）
+  (unless (file-exists-p (file-name-directory persp-state-default-file))
+    (make-directory (file-name-directory persp-state-default-file) t)))
+
 (use-package meow
   :load-path "~/.emacs.d/site-lisp/meow"
   :init

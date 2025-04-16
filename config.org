@@ -15,6 +15,12 @@
 (scroll-bar-mode -1)
 #+end_src
 
+** Fullscreen on Startup
+#+begin_src emacs-lisp
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(setq default-frame-alist '((fullscreen . maximized)))
+#+end_src
+
 ** Encoding Settings
 #+begin_src emacs-lisp
 (prefer-coding-system 'utf-8)
@@ -91,6 +97,32 @@
 #+end_src
 
 * File Management
+
+* Workspace Management
+** Perspective Configuration
+#+begin_src emacs-lisp
+;; 加载perspective包
+(use-package perspective
+  :load-path "~/.emacs.d/site-lisp/perspective"
+  :init
+  ;; 启用perspective模式
+  (persp-mode)
+  :config
+  ;; 设置默认perspective名称
+  (setq persp-initial-frame-name "main")
+  
+  ;; 快捷键绑定
+  (global-set-key (kbd "C-x k") 'persp-kill)  ;; 删除当前perspective
+  (global-set-key (kbd "C-x C-b") 'persp-list-buffers)  ;; 列出perspective中的缓冲区
+  (global-set-key (kbd "C-x C-p") 'persp-switch)  ;; 切换perspective
+  (global-set-key (kbd "C-x p n") 'persp-next)  ;; 切换到下一个perspective
+  (global-set-key (kbd "C-x p p") 'persp-prev)  ;; 切换到上一个perspective
+  (global-set-key (kbd "C-x p c") 'persp-copy)  ;; 复制当前perspective
+  
+  ;; 自动保存perspective状态
+  (add-hook 'kill-emacs-hook #'persp-state-save)
+  (persp-state-load))
+#+end_src
 ** Dired Sidebar Configuration
 #+begin_src emacs-lisp
 (use-package dired-sidebar
@@ -542,6 +574,9 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
            (file+headline "~/org-roam/research_ideas.org" "Ideas")
            "* %?\n  %U\n  %i"))))
 #+end_src
+
+
+
 
 * Modal Editing with Meow
 ** Meow Configuration

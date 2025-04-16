@@ -1,6 +1,6 @@
 #+TITLE: Emacs 功能与快捷键指南
 #+AUTHOR: vitamin-k
-#+DATE: [2023-11-20]
+#+DATE: [2024-03-01]
 
 * 基础配置
 ** 界面设置
@@ -107,6 +107,9 @@
 | AI 求解 PDE  | C-c a s   |
 | AI 对话      | C-c a c   |
 | AI 提示      | C-c a i   |
+| 插入数学符号 | ` + 字符  |
+| 创建环境     | C-c C-e   |
+| 插入引用     | 通过 org-ref |
 
 * 综合快捷键菜单 (Hydra)
 ** 数学笔记菜单
