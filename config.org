@@ -56,6 +56,31 @@
                "~/.emacs.d/site-lisp/use-package/"))
 #+end_src
 
+* 补全系统
+** Vertico/Consult/Orderless 配置
+#+begin_src emacs-lisp
+;; 现代化补全框架
+(use-package vertico
+  :load-path "~/.emacs.d/site-lisp/vertico"
+  :init
+  (require 'vertico)
+  (vertico-mode))
+
+(use-package consult
+  :load-path "~/.emacs.d/site-lisp/consult"
+  :bind (("C-s" . consult-line)
+         ("C-r". consult-history)
+         ("M-y". consult-yank-pop)
+         ("C-x b". consult-buffer)
+         ("C-c f" . consult-find)))
+
+(use-package orderless
+  :load-path "~/.emacs.d/site-lisp/orderless"
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+#+end_src
+
 * org-mode
 ** org-mode 安装
 #+begin_src emacs-lisp
@@ -500,5 +525,234 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
           ("i" "研究想法" entry
            (file+headline "~/org-roam/research_ideas.org" "Ideas")
            "* %?\n  %U\n  %i"))))
+#+end_src
+
+* Meow 模态编辑
+** 基础配置
+#+begin_src emacs-lisp
+;; Meow 模态编辑配置
+(use-package meow
+  :load-path "~/.emacs.d/site-lisp/meow"
+  :init
+  ;; 加载布局定义文件
+  (require 'meow-cheatsheet-layout)
+  ;; 加载meow核心模块
+  (require 'meow)
+  
+  ;; 为 macOS 优化的 Meow 设置
+  (defun meow-setup-mac ()
+    ;; 设置 QWERTY 布局
+    (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+    
+    ;; 移动模式键位
+    (meow-motion-define-key
+     '("j" . meow-next)
+     '("k" . meow-prev)
+     '("<escape>" . ignore))
+    
+    ;; Leader 键设置 (使用空格键)
+    (meow-leader-define-key
+     ;; 数字参数
+     '("1" . meow-digit-argument)
+     '("2" . meow-digit-argument)
+     '("3" . meow-digit-argument)
+     '("4" . meow-digit-argument)
+     '("5" . meow-digit-argument)
+     '("6" . meow-digit-argument)
+     '("7" . meow-digit-argument)
+     '("8" . meow-digit-argument)
+     '("9" . meow-digit-argument)
+     '("0" . meow-digit-argument)
+     
+     ;; 常用命令
+     '("b" . consult-buffer)
+     '("f" . find-file)
+     '("w" . save-buffer)
+     '("k" . kill-this-buffer)
+     '("s" . save-some-buffers)
+     '("d" . dired-jump)
+     '("o" . delete-other-windows)
+     '("v" . split-window-vertically)
+     '("h" . split-window-horizontally)
+     '("p" . project-find-file)
+     '("g" . magit-status)
+     
+     ;; 帮助
+     '("/" . meow-keypad-describe-key)
+     '("?" . meow-cheatsheet))
+    
+    ;; 普通模式键位
+    (meow-normal-define-key
+     '("0" . meow-expand-0)
+     '("9" . meow-expand-9)
+     '("8" . meow-expand-8)
+     '("7" . meow-expand-7)
+     '("6" . meow-expand-6)
+     '("5" . meow-expand-5)
+     '("4" . meow-expand-4)
+     '("3" . meow-expand-3)
+     '("2" . meow-expand-2)
+     '("1" . meow-expand-1)
+     '("-" . negative-argument)
+     '(";" . meow-reverse)
+     '("," . meow-inner-of-thing)
+     '("." . meow-bounds-of-thing)
+     '("[" . meow-beginning-of-thing)
+     '("]" . meow-end-of-thing)
+     '("a" . meow-append)
+     '("A" . meow-open-below)
+     '("b" . meow-back-word)
+     '("B" . meow-back-symbol)
+     '("c" . meow-change)
+     '("d" . meow-delete)
+     '("D" . meow-backward-delete)
+     '("e" . meow-next-word)
+     '("E" . meow-next-symbol)
+     '("f" . meow-find)
+     '("g" . meow-cancel-selection)
+     '("G" . meow-grab)
+     '("h" . meow-left)
+     '("H" . meow-left-expand)
+     '("i" . meow-insert)
+     '("I" . meow-open-above)
+     '("j" . meow-next)
+     '("J" . meow-next-expand)
+     '("k" . meow-prev)
+     '("K" . meow-prev-expand)
+     '("l" . meow-right)
+     '("L" . meow-right-expand)
+     '("m" . meow-join)
+     ;; 删除n键的meow-search绑定
+     '("o" . meow-block)
+     '("O" . meow-to-block)
+     '("p" . meow-yank)
+     '("q" . meow-quit)
+     '("Q" . meow-goto-line)
+     '("r" . meow-replace)
+     '("R" . meow-swap-grab)
+     '("s" . meow-kill)
+     '("t" . meow-till)
+     '("u" . meow-undo)
+     '("U" . meow-undo-in-selection)
+     '("v" . meow-visit)
+     '("w" . meow-mark-word)
+     '("W" . meow-mark-symbol)
+     '("x" . meow-line)
+     '("X" . meow-goto-line)
+     '("y" . meow-save)
+     '("Y" . meow-sync-grab)
+     '("z" . meow-pop-selection)
+     '("'" . repeat)
+     '("<escape>" . ignore)))
+  
+  ;; 调用设置函数
+  (meow-setup-mac)
+  
+  ;; Mac 特定优化
+  (setq mac-command-modifier 'meta)       ;; 将 Command 键映射为 Meta
+  (setq mac-option-modifier 'super)       ;; 将 Option 键映射为 Super
+  (setq mac-right-option-modifier 'none)  ;; 右 Option 键保持原样，用于输入特殊字符
+  
+  ;; 启用 meow 全局模式
+  :config
+  ;; 设置模式指示器
+  (setq meow-cursor-type-normal 'box)
+  (setq meow-cursor-type-insert '(bar . 2))
+  (setq meow-cursor-type-motion 'hollow)
+  
+  ;; 自定义模式行指示器
+  (setq meow-replace-state-name-alist
+        '((normal . "N")
+          (insert . "I")
+          (motion . "M")
+          (keypad . "K")))
+  
+  ;; 启用全局模式
+  (meow-global-mode 1))
+#+end_src
+
+** ace-pinyin 配置
+#+begin_src emacs-lisp
+;; 加载 pinyinlib
+(use-package pinyinlib
+  :load-path "~/.emacs.d/site-lisp/pinyinlib.el")
+
+;; 加载 ace-pinyin
+(use-package ace-pinyin
+  :init
+  ;; 使用 avy 作为后端
+  (setq ace-pinyin-use-avy t)
+  :config
+  ;; 启用全局模式，支持中文拼音首字母跳转
+  (ace-pinyin-global-mode +1))
+#+end_src
+
+** 模式集成
+#+begin_src emacs-lisp
+;; Meow 与其他模式的集成
+(with-eval-after-load 'meow
+  ;; 为特定模式设置初始状态
+  (add-to-list 'meow-mode-state-list '(pdf-view-mode . motion))
+  (add-to-list 'meow-mode-state-list '(dired-mode . motion))
+  (add-to-list 'meow-mode-state-list '(org-agenda-mode . motion))
+  (add-to-list 'meow-mode-state-list '(magit-status-mode . motion))
+  (add-to-list 'meow-mode-state-list '(helpful-mode . motion))
+  (add-to-list 'meow-mode-state-list '(help-mode . motion))
+  
+  ;; 为 org-mode 添加特定键位
+  (add-to-list 'meow-mode-state-list '(org-mode . normal))
+  (meow-define-keys
+   'normal
+   '("TAB" . org-cycle))
+  
+  ;; 为 ace-pinyin 添加 meow 快捷键
+  (with-eval-after-load 'ace-pinyin
+    ;; 在普通模式下使用 'v' 键触发 ace-pinyin-char-2，'V' 键触发 ace-pinyin-in-line
+    (meow-define-keys
+     'normal
+     '("v" . ace-pinyin-jump-char-2)
+     '("V" . ace-pinyin-jump-char-in-line)))
+  
+  ;; 为 org-roam 添加特定键位
+  (with-eval-after-load 'org-roam
+    (meow-leader-define-key
+     '("n f" . org-roam-node-find)
+     '("n i" . org-roam-node-insert)
+     '("n c" . org-roam-capture)
+     '("n l" . org-roam-buffer-toggle))))
+#+end_src
+
+** 调试辅助函数
+#+begin_src emacs-lisp
+;; Meow 调试辅助函数
+(defun meow-debug-info ()
+  "显示 Meow 的调试信息。"
+  (interactive)
+  (let ((buf (get-buffer-create "*Meow Debug*")))
+    (with-current-buffer buf
+      (erase-buffer)
+      (insert (format "Meow 版本: %s\n" (if (fboundp 'meow-version)
+                                         (meow-version)
+                                       "未知")))
+      (insert (format "当前状态: %s\n" meow--current-state))
+      (insert (format "全局模式状态: %s\n" (if meow-global-mode "已启用" "未启用")))
+      (insert "\n模式状态列表:\n")
+      (dolist (mode-state meow-mode-state-list)
+        (insert (format "  %s: %s\n" (car mode-state) (cdr mode-state))))
+      (insert "\n键位映射:\n")
+      (insert "  普通模式键位数量: ")
+      (insert (format "%d\n" (length (cdr (assoc 'normal meow--kbd-alist)))))
+      (insert "  插入模式键位数量: ")
+      (insert (format "%d\n" (length (cdr (assoc 'insert meow--kbd-alist)))))
+      (insert "  移动模式键位数量: ")
+      (insert (format "%d\n" (length (cdr (assoc 'motion meow--kbd-alist)))))
+      (insert "  Leader键位数量: ")
+      (insert (format "%d\n" (length (cdr (assoc 'leader meow--kbd-alist))))))
+    (switch-to-buffer buf)))
+
+;; 绑定调试快捷键
+(with-eval-after-load 'meow
+  (meow-leader-define-key
+   '("M-d" . meow-debug-info)))
 #+end_src
 

@@ -97,3 +97,18 @@
 [submodule "site-lisp/pinyinlib.el"]
 	path = site-lisp/pinyinlib.el
 	url = https://github.com/cute-jumper/pinyinlib.el.git
+[submodule "site-lisp/marginalia"]
+	path = site-lisp/marginalia
+	url = https://github.com/minad/marginalia.git
+[submodule "site-lisp/workgroups2"]
+	path = site-lisp/workgroups2
+	url = https://github.com/pashinin/workgroups2.git
+[submodule "site-lisp/perspective"]
+	path = site-lisp/perspective
+	url = https://github.com/nex3/perspective-el.git
+[submodule "site-lisp/ace-window"]
+	path = site-lisp/ace-window
+	url = https://github.com/abo-abo/ace-window.git
+[submodule "site-lisp/--force"]
+	path = site-lisp/--force
+	url = https://depp.brause.cc/eyebrowse.git
