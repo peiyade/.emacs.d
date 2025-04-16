@@ -1,8 +1,18 @@
-(setq inhibit-startup-message t)
+(setq inhibit-startup-message t)  ; 禁用Emacs启动时的欢迎消息，t表示启用此设置
 
+;; 禁用模式，参数-1表示禁用
+;; 工具栏通常位于窗口顶部，包含常用功能的图标按钮
+;; 禁用后可增加编辑区域空间，适合熟练用户使用快捷键操作
 (tool-bar-mode -1)
+;; 菜单栏包含文件、编辑、选项等传统菜单项
+;; 禁用后可简化界面，减少视觉干扰
 (menu-bar-mode -1)
+;; 滚动条通常出现在窗口右侧，用于内容导航
+;; 禁用后可增加编辑区域宽度，Emacs提供其他导航方式如键盘滚动
 (scroll-bar-mode -1)
+
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(setq default-frame-alist '((fullscreen . maximized)))
 
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
@@ -447,34 +457,6 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
           ("i" "研究想法" entry
            (file+headline "~/org-roam/research_ideas.org" "Ideas")
            "* %?\n  %U\n  %i"))))
-
-(use-package perspective
-  :load-path "~/.emacs.d/site-lisp/perspective"
-  :init
-  (setq persp-state-default-file "~/.emacs.d/.emacs_perspectives") ; 保存会话文件的位置
-  (setq persp-mode-prefix-key (kbd "C-c p")) ; 设置前缀键为C-c p
-  (setq persp-suppress-no-prefix-key-warning t) ; 禁用无前缀键警告
-  
-  :config
-  (persp-mode 1)
-  
-  ;; 在模式栏显示当前perspective
-  (setq persp-show-modestring t)
-  (setq persp-modestring-short t)  ; 使用简短的模式栏显示
-  
-  ;; 定义快捷键 (使用与workgroups2相似的前缀)
-  (global-set-key (kbd "C-c w s") 'persp-switch)         ; 切换perspective
-  (global-set-key (kbd "C-c w c") 'persp-new)            ; 创建新perspective
-  (global-set-key (kbd "C-c w k") 'persp-kill)           ; 删除perspective
-  (global-set-key (kbd "C-c w r") 'persp-rename)         ; 重命名perspective
-  (global-set-key (kbd "C-c w a") 'persp-add-buffer)     ; 添加buffer到perspective
-  (global-set-key (kbd "C-c w b") 'persp-switch-to-buffer) ; 切换到perspective中的buffer
-  (global-set-key (kbd "C-c w S") 'persp-state-save)     ; 保存所有perspective状态
-  (global-set-key (kbd "C-c w L") 'persp-state-load)     ; 加载perspective状态
-  
-  ;; 创建目录（如果不存在）
-  (unless (file-exists-p (file-name-directory persp-state-default-file))
-    (make-directory (file-name-directory persp-state-default-file) t)))
 
 (use-package meow
   :load-path "~/.emacs.d/site-lisp/meow"

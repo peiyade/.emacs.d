@@ -5,38 +5,59 @@
 * Basic Settings
 ** Disable Startup Screen
 #+begin_src emacs-lisp
-(setq inhibit-startup-message t)
+(setq inhibit-startup-message t)  ; 禁用Emacs启动时的欢迎消息，t表示启用此设置
 #+end_src
 
 ** Disable UI Elements
 #+begin_src emacs-lisp
+;; 禁用模式，参数-1表示禁用
+;; 工具栏通常位于窗口顶部，包含常用功能的图标按钮
+;; 禁用后可增加编辑区域空间，适合熟练用户使用快捷键操作
 (tool-bar-mode -1)
+;; 菜单栏包含文件、编辑、选项等传统菜单项
+;; 禁用后可简化界面，减少视觉干扰
 (menu-bar-mode -1)
+;; 滚动条通常出现在窗口右侧，用于内容导航
+;; 禁用后可增加编辑区域宽度，Emacs提供其他导航方式如键盘滚动
 (scroll-bar-mode -1)
 #+end_src
 
 ** Fullscreen on Startup
 #+begin_src emacs-lisp
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
-(setq default-frame-alist '((fullscreen . maximized)))
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))  ; 将初始帧设置为最大化状态
+;; `initial-frame-alist' 是一个列表，包含Emacs启动时第一个窗口的初始参数
+;; 这里添加 '(fullscreen . maximized) 表示窗口初始状态为最大化
+;; 在macOS系统上，这会使Emacs窗口占据整个屏幕
+
+(setq default-frame-alist '((fullscreen . maximized)))  ; 设置所有后续创建的帧的默认参数
+;; `default-frame-alist' 定义所有新创建窗口的默认参数
+;; 这里设置为最大化状态，确保后续创建的任何窗口都会最大化显示
 #+end_src
 
 ** Encoding Settings
 #+begin_src emacs-lisp
+;; 设置Emacs优先使用UTF-8编码系统
 (prefer-coding-system 'utf-8)
+;; 设置默认编码系统为UTF-8，影响新创建的缓冲区
 (set-default-coding-systems 'utf-8)
+;; 设置终端编码为UTF-8，确保终端显示正确
 (set-terminal-coding-system 'utf-8)
+;; 设置键盘输入编码为UTF-8，保证输入字符正确处理
 (set-keyboard-coding-system 'utf-8)
 #+end_src
 
 ** Backup Settings
 #+begin_src emacs-lisp
+;; 设置备份文件存储目录
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+;; 设置自动保存文件存储位置
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
 #+end_src
 
 ** Load Path Configuration
 #+begin_src emacs-lisp
+;; 递归添加site-lisp目录及其子目录到加载路径
+;; 使Emacs能够找到这些目录中的Lisp文件
 (let ((default-directory "~/.emacs.d/site-lisp/"))
   (normal-top-level-add-subdirs-to-load-path))
 #+end_src
@@ -44,11 +65,16 @@
 * Package Management
 ** use-package Configuration
 #+begin_src emacs-lisp
+;; 加载use-package模块并设置基本参数
 (require 'use-package)
+;; 禁用自动确保包安装功能
 (setq use-package-always-ensure nil)
+;; 添加use-package到加载路径
 (add-to-list 'load-path "~/.emacs.d/site-lisp/use-package")
+;; 再次加载以确保可用
 (require 'use-package)
 
+;; 配置info文档路径以便查看帮助文档
 (with-eval-after-load 'info
   (info-initialize)
   (add-to-list 'Info-directory-list
@@ -96,33 +122,8 @@
   (marginalia-mode))
 #+end_src
 
-* File Management
-
 * Workspace Management
-** Perspective Configuration
-#+begin_src emacs-lisp
-;; 加载perspective包
-(use-package perspective
-  :load-path "~/.emacs.d/site-lisp/perspective"
-  :init
-  ;; 启用perspective模式
-  (persp-mode)
-  :config
-  ;; 设置默认perspective名称
-  (setq persp-initial-frame-name "main")
-  
-  ;; 快捷键绑定
-  (global-set-key (kbd "C-x k") 'persp-kill)  ;; 删除当前perspective
-  (global-set-key (kbd "C-x C-b") 'persp-list-buffers)  ;; 列出perspective中的缓冲区
-  (global-set-key (kbd "C-x C-p") 'persp-switch)  ;; 切换perspective
-  (global-set-key (kbd "C-x p n") 'persp-next)  ;; 切换到下一个perspective
-  (global-set-key (kbd "C-x p p") 'persp-prev)  ;; 切换到上一个perspective
-  (global-set-key (kbd "C-x p c") 'persp-copy)  ;; 复制当前perspective
-  
-  ;; 自动保存perspective状态
-  (add-hook 'kill-emacs-hook #'persp-state-save)
-  (persp-state-load))
-#+end_src
+
 ** Dired Sidebar Configuration
 #+begin_src emacs-lisp
 (use-package dired-sidebar
