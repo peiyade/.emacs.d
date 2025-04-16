@@ -19,3 +19,8 @@
  '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
  '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
  '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
+
+;; load secrets file
+(let ((secrets-file (expand-file-name "~/.emacs.d/secrets.el")))
+  (when (file-exists-p secrets-file)
+    (load secrets-file)))

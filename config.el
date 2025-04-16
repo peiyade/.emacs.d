@@ -1,3 +1,5 @@
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
 (setq inhibit-startup-message t)
 
 (tool-bar-mode -1)
@@ -54,12 +56,15 @@
   (marginalia-mode))
 
 (use-package org
-  :ensure nil
+  :ensure nil ;; Use the built-in Org package
   :config
-  (setq org-ellipsis " ▾ ")
+  ;; Beautify Org Mode
+  (setq org-ellipsis " ▾ ") 
   (setq org-hide-emphasis-markers t)
+  ;; Indentation and folding on startup
   (setq org-startup-indented t)
   (setq org-indent-mode-turns-on-hiding-stars t)
+  ;; Fontification
   (custom-set-faces
    '(org-level-1 ((t (:inherit outline-1 :height 1.3))))
    '(org-level-2 ((t (:inherit outline-2 :height 1.2))))
@@ -67,6 +72,7 @@
    '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
    '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
   
+  ;; Indentation and folding
   (setq org-indent-indentation-per-level 2))
 
 (use-package org-id

@@ -19,6 +19,7 @@ config.el
 
 # 项目本地变量
 .dir-locals.el
+.emacs.secrets
 
 # 网络缓存
 /url/

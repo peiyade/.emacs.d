@@ -1,14 +1,25 @@
 #+TITLE: Emacs Configuration
 #+AUTHOR: Your Name
 #+STARTUP: indent
+;;; 这是Emacs的主要配置文件，使用org-mode格式编写
+;;; 配置通过org-babel在保存时自动tangle到init.el
 
 * Basic Settings
+;;; 基础设置部分包含窗口管理、界面元素、编码和备份等基本配置
+** Window Maximization
+;;; 设置Emacs窗口启动时最大化显示
+#+begin_src emacs-lisp
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+#+end_src
+
 ** Disable Startup Screen
+;;; 禁用Emacs启动时的欢迎界面
 #+begin_src emacs-lisp
 (setq inhibit-startup-message t)
 #+end_src
 
 ** Disable UI Elements
+;;; 禁用工具栏、菜单栏和滚动条，提供更简洁的编辑界面
 #+begin_src emacs-lisp
 (tool-bar-mode -1)
 (menu-bar-mode -1)
@@ -16,6 +27,7 @@
 #+end_src
 
 ** Encoding Settings
+;;; 设置UTF-8为默认编码系统，确保多语言支持
 #+begin_src emacs-lisp
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
@@ -24,19 +36,23 @@
 #+end_src
 
 ** Backup Settings
+;;; 配置备份文件存放位置，避免污染工作目录
 #+begin_src emacs-lisp
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
 #+end_src
 
 ** Load Path Configuration
+;;; 将site-lisp目录及其子目录添加到load-path，方便加载第三方库
 #+begin_src emacs-lisp
 (let ((default-directory "~/.emacs.d/site-lisp/"))
   (normal-top-level-add-subdirs-to-load-path))
 #+end_src
 
 * Package Management
+;;; 包管理部分配置use-package来管理Emacs插件
 ** use-package Configuration
+;;; 配置use-package，这是Emacs的声明式包管理工具
 #+begin_src emacs-lisp
 (require 'use-package)
 (setq use-package-always-ensure nil)
@@ -50,7 +66,9 @@
 #+end_src
 
 * Completion Framework
+;;; 补全框架部分配置现代化补全系统，包括Vertico、Consult、Orderless等
 ** Vertico
+;;; Vertico提供现代化的垂直补全界面，替代默认的水平补全
 #+begin_src emacs-lisp
 (use-package vertico
   :load-path "~/.emacs.d/site-lisp/vertico"
@@ -60,106 +78,126 @@
 #+end_src
 
 ** Consult
+;;; Consult增强搜索功能，提供统一的搜索接口
 #+begin_src emacs-lisp
 (use-package consult
   :load-path "~/.emacs.d/site-lisp/consult"
-  :bind (("C-s" . consult-line)
-         ("C-r". consult-history)
-         ("M-y". consult-yank-pop)
-         ("C-x b". consult-buffer)
-         ("C-c f" . consult-find)))
+  :bind (("C-s" . consult-line)   ; 行内搜索
+         ("C-r". consult-history) ; 搜索历史
+         ("M-y". consult-yank-pop) ; 粘贴历史
+         ("C-x b". consult-buffer) ; 缓冲区切换
+         ("C-c f" . consult-find))) ; 文件查找
 #+end_src
 
 ** Orderless
+;;; Orderless提供灵活的补全匹配方式，支持模糊匹配
 #+begin_src emacs-lisp
 (use-package orderless
   :load-path "~/.emacs.d/site-lisp/orderless"
   :custom
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
+  (completion-styles '(orderless basic)) ; 设置补全风格
+  (completion-category-overrides '((file (styles basic partial-completion))))) ; 文件补全使用基本风格
 #+end_src
 
 ** Marginalia
 #+begin_src emacs-lisp
 (use-package marginalia
-  :load-path "~/.emacs.d/site-lisp/marginalia"
-  :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
-  :init
-  (require 'marginalia)
-  (marginalia-mode))
+  :load-path "~/.emacs.d/site-lisp/marginalia"  ; 设置marginalia包的加载路径
+  :bind (:map minibuffer-local-map         ; 在minibuffer局部键位映射中绑定快捷键
+         ("M-A" . marginalia-cycle))      ; 使用M-A循环切换注解的详细程度
+  :init                                   ; 初始化设置
+  (require 'marginalia)                   ; 加载marginalia包
+  (marginalia-mode))                     ; 启用marginalia次要模式
 #+end_src
 
 * Org Mode Configuration
 ** Basic Org Settings
 #+begin_src emacs-lisp
 (use-package org
-  :ensure nil ;; Use the built-in Org package
+  :ensure nil ;; 使用内置的Org包，不通过package.el安装
   :config
-  ;; Beautify Org Mode
-  (setq org-ellipsis " ▾ ") 
-  (setq org-hide-emphasis-markers t)
-  ;; Indentation and folding on startup
-  (setq org-startup-indented t)
-  (setq org-indent-mode-turns-on-hiding-stars t)
-  ;; Fontification
-  (custom-set-faces
-   '(org-level-1 ((t (:inherit outline-1 :height 1.3))))
-   '(org-level-2 ((t (:inherit outline-2 :height 1.2))))
-   '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
-   '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
-   '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
+  ;; Org模式美化设置
+  (setq org-ellipsis " ▾ ")  ; 设置折叠时显示的省略符号
+  (setq org-hide-emphasis-markers t)  ; 隐藏*、/、_等强调标记，使文档更整洁
   
-  ;; Indentation and folding
-  (setq org-indent-indentation-per-level 2))
+  ;; 缩进和折叠配置
+  (setq org-startup-indented t)  ; 启动时启用缩进模式，使文档层次更清晰
+  (setq org-indent-mode-turns-on-hiding-stars t)  ; 缩进模式时隐藏标题前的星号
+  
+  ;; 字体和外观设置
+  (custom-set-faces
+   '(org-level-1 ((t (:inherit outline-1 :height 1.3))))  ; 一级标题字体大小
+   '(org-level-2 ((t (:inherit outline-2 :height 1.2))))  ; 二级标题字体大小
+   '(org-level-3 ((t (:inherit outline-3 :height 1.1))))  ; 三级标题字体大小
+   '(org-level-4 ((t (:inherit outline-4 :height 1.0))))  ; 四级标题字体大小
+   '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))  ; 五级标题字体大小
+  
+  ;; 缩进配置
+  (setq org-indent-indentation-per-level 2))  ; 每级标题缩进2个空格
 #+end_src
 
 ** Org ID Configuration
 #+begin_src emacs-lisp
 (use-package org-id
-  :after org
-  :ensure nil
+  :after org  ; 确保在org包加载后执行
+  :ensure nil  ; 使用内置的org-id功能，不需要额外安装
   :config
+  ;; 设置ID生成方法为时间戳(ts)，确保ID唯一性
   (setq org-id-method 'ts)
+  ;; 启用全局ID跟踪，便于跨文件引用
   (setq org-id-track-globally t)
+  ;; 指定存储ID位置的文件路径，用于快速查找
   (setq org-id-locations-file "~/.emacs.d/.org-id-locations"))
 #+end_src
 
 ** Org Babel
+;;; 配置Org Babel支持的语言
+;;; 这里启用了Emacs Lisp和Shell两种语言的代码块执行功能
+;;; 通过org-babel-load-languages变量可以添加更多支持的语言
 #+begin_src emacs-lisp
 (org-babel-do-load-languages
  'org-babel-load-languages
- '((emacs-lisp . t)
-   (shell . t)))
+ '((emacs-lisp . t)   ; 启用Emacs Lisp代码块执行
+   (shell . t)))      ; 启用Shell代码块执行
 #+end_src
 
 ** Auto-tangle config.org
+;;; 自动将config.org文件中的代码块提取到init.el
+;;; 这个功能会在每次保存config.org文件时自动执行
+;;; 通过org-babel-tangle函数将org文件中的代码块提取到指定文件
 #+begin_src emacs-lisp
 (defun tangle-config-org ()
   "Tangle config.org on save."
+  ;; 检查当前文件是否为config.org
   (when (equal (buffer-file-name) 
                (expand-file-name "~/.emacs.d/config.org"))
+    ;; 执行代码块提取操作
     (org-babel-tangle)))
 
+;; 将tangle-config-org函数添加到after-save-hook
+;; 这样每次保存文件时都会自动执行代码提取
 (add-hook 'after-save-hook 'tangle-config-org)
 #+end_src
 
 * PDF Tools
 ** PDF Tools Packages
 #+begin_src emacs-lisp
+;;; PDF工具相关配置
+;;; 这里加载了PDF工具的各种子模块，每个模块提供不同的PDF阅读和编辑功能
 (use-package pdf-occur
-    :commands (pdf-occur-global-minor-mode))
+    :commands (pdf-occur-global-minor-mode))  ; 提供PDF全文搜索功能，类似Emacs的occur模式
   (use-package pdf-history
-    :commands (pdf-history-minor-mode))
+    :commands (pdf-history-minor-mode))      ; 记录PDF浏览历史，支持前进/后退导航
   (use-package pdf-links
-    :commands (pdf-links-minor-mode))
+    :commands (pdf-links-minor-mode))        ; 处理PDF内部链接和书签
   (use-package pdf-outline
-    :commands (pdf-outline-minor-mode))
+    :commands (pdf-outline-minor-mode))      ; 显示PDF目录大纲
   (use-package pdf-annot
-    :commands (pdf-annot-minor-mode))
+    :commands (pdf-annot-minor-mode))       ; 支持PDF注释功能（高亮、下划线等）
   (use-package pdf-sync
-    :commands (pdf-sync-minor-mode))
+    :commands (pdf-sync-minor-mode))         ; 同步PDF和源文件位置
 
+;;; tablist包提供表格界面，用于PDF工具中的列表显示
 (use-package tablist
   :load-path "~/.emacs.d/site-lisp/tablist")
 #+end_src
@@ -167,27 +205,36 @@
 ** PDF Tools Configuration
 #+begin_src emacs-lisp
 (use-package pdf-tools
-  :load-path "~/.emacs.d/site-lisp/pdf-tools/lisp/"
-  :magic ("%PDF" . pdf-view-mode)
+  :load-path "~/.emacs.d/site-lisp/pdf-tools/lisp/"  ; 设置pdf-tools包的加载路径
+  :magic ("%PDF" . pdf-view-mode)  ; 自动检测PDF文件并启用pdf-view-mode
   :config
-  (pdf-tools-install)
-  (setq-default pdf-view-display-size 'fit-page)
+  (pdf-tools-install)  ; 安装PDF工具核心组件
+  (setq-default pdf-view-display-size 'fit-page)  ; 设置默认PDF显示大小为适应页面
   (add-hook 'pdf-view-mode-hook (lambda () 
-                                  (display-line-numbers-mode -1)))
-  (add-hook 'pdf-view-mode-hook 'pdf-annot-minor-mode)
-  (add-hook 'pdf-view-mode-hook 'pdf-outline-minor-mode)
-  (add-hook 'pdf-view-mode-hook 'pdf-sync-minor-mode))
+                                  (display-line-numbers-mode -1)))  ; 在PDF模式下禁用行号显示
+  (add-hook 'pdf-view-mode-hook 'pdf-annot-minor-mode)  ; 启用PDF注释功能（高亮、下划线等）
+  (add-hook 'pdf-view-mode-hook 'pdf-outline-minor-mode)  ; 启用PDF大纲导航功能
+  (add-hook 'pdf-view-mode-hook 'pdf-sync-minor-mode))  ; 启用PDF与源文件位置同步功能
 #+end_src
 
 ** Org and PDF Integration
 #+begin_src emacs-lisp
 (with-eval-after-load 'org
+  ;; 配置Org Babel支持的语言
+  ;; emacs-lisp: 支持执行Emacs Lisp代码块
+  ;; shell: 支持执行Shell脚本代码块
+  ;; latex: 支持LaTeX代码块编译和预览
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
      (shell . t)
      (latex . t))))
 
+;; 设置不同文件类型在Org模式中的默认打开方式
+;; auto-mode: 使用Emacs默认模式打开
+;; \.mm\': 使用系统默认程序打开FreeMind思维导图文件
+;; \.x?html?\': 使用系统默认浏览器打开HTML文件
+;; \.pdf\': 使用Emacs的pdf-tools打开PDF文件
 (setq org-file-apps
       '((auto-mode . emacs)
         ("\\.mm\\'" . default)
@@ -198,48 +245,49 @@
 * Org-Roam Configuration
 #+begin_src emacs-lisp
 (use-package org-roam
-  :load-path "~/.emacs.d/site-lisp/org-roam"
+  :load-path "~/.emacs.d/site-lisp/org-roam"  ; 设置org-roam包的加载路径
   :custom
-  (org-roam-directory (file-truename "~/org-roam"))
-  (org-roam-completion-everywhere t)
-  (org-roam-capture-templates
-   '(("d" "默认" plain
+  (org-roam-directory (file-truename "~/org-roam"))  ; 设置org-roam笔记存储目录
+  (org-roam-completion-everywhere t)  ; 在所有地方启用org-roam补全功能
+  (org-roam-capture-templates  ; 定义笔记捕获模板
+   '(("d" "默认" plain  ; 默认模板
       "%?" :target
-      (file+head "${slug}.org" "#+title: ${title}\n")
-      :unnarrowed t)
-     ("m" "数学概念" plain
+      (file+head "${slug}.org" "#+title: ${title}\n")  ; 自动生成文件名和标题
+      :unnarrowed t)  ; 不限制编辑区域
+     ("m" "数学概念" plain  ; 数学概念模板
       "* 定义\n%?\n\n* 性质\n\n* 例子\n\n* 相关概念\n\n* 参考文献\n"
-      :target (file+head "math/${slug}.org"
-                        "#+title: ${title}\n#+filetags: :math:concept:\n")
+      :target (file+head "math/${slug}.org"  ; 存储在math子目录
+                        "#+title: ${title}\n#+filetags: :math:concept:\n")  ; 自动添加数学概念标签
       :unnarrowed t)
-     ("t" "定理" plain
+     ("t" "定理" plain  ; 定理模板
       "* 陈述\n%?\n\n* 证明\n\n* 推论\n\n* 应用\n\n* 参考文献\n"
-      :target (file+head "math/theorems/${slug}.org"
-                        "#+title: ${title}\n#+filetags: :math:theorem:\n")
+      :target (file+head "math/theorems/${slug}.org"  ; 存储在theorems子目录
+                        "#+title: ${title}\n#+filetags: :math:theorem:\n")  ; 自动添加定理标签
       :unnarrowed t)
-     ("p" "PDE问题" plain
+     ("p" "PDE问题" plain  ; 偏微分方程问题模板
       "* 问题描述\n%?\n\n* 边界条件\n\n* 解法思路\n\n* 解的性质\n\n* 相关文献\n"
-      :target (file+head "math/pde/${slug}.org"
-                        "#+title: ${title}\n#+filetags: :math:pde:\n")
+      :target (file+head "math/pde/${slug}.org"  ; 存储在pde子目录
+                        "#+title: ${title}\n#+filetags: :math:pde:\n")  ; 自动添加PDE标签
       :unnarrowed t)
-     ("r" "研究笔记" plain
+     ("r" "研究笔记" plain  ; 研究笔记模板
       "* 研究问题\n%?\n\n* 相关工作\n\n* 方法\n\n* 结果\n\n* 下一步计划\n"
-      :target (file+head "research/${slug}.org"
-                        "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :research:\n")
+      :target (file+head "research/${slug}.org"  ; 存储在research目录
+                        "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :research:\n")  ; 自动添加日期和研究标签
       :unnarrowed t)))
-  :bind ((:map global-map
-          ("C-c n f" . org-roam-node-find)
-          ("C-c n i" . org-roam-node-insert)
-          ("C-c n c" . org-roam-capture)
-          ("C-c n l" . org-roam-buffer-toggle))
+  :bind ((:map global-map  ; 全局快捷键绑定
+          ("C-c n f" . org-roam-node-find)  ; 查找节点
+          ("C-c n i" . org-roam-node-insert)  ; 插入链接
+          ("C-c n c" . org-roam-capture)  ; 捕获新笔记
+          ("C-c n l" . org-roam-buffer-toggle))  ; 切换侧边栏
          (:map org-mode-map
-          ("C-M-i" . completion-at-point)))
+          ("C-M-i" . completion-at-point)))  ; 在org-mode中启用补全
   :config
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t)
+  (setq org-roam-ui-sync-theme t  ; 同步UI主题
+        org-roam-ui-follow t  ; 跟随当前节点
+        org-roam-ui-update-on-save t  ; 保存时更新UI
+        org-roam-ui-open-on-start t)  ; 启动时自动打开UI
   
+  ;; 创建必要的目录结构
   (unless (file-exists-p org-roam-directory)
     (make-directory org-roam-directory t))
   (unless (file-exists-p (expand-file-name "math" org-roam-directory))
@@ -251,15 +299,16 @@
   (unless (file-exists-p (expand-file-name "research" org-roam-directory))
     (make-directory (expand-file-name "research" org-roam-directory) t))
   
-  (org-roam-db-autosync-mode))
+  (org-roam-db-autosync-mode))  ; 启用数据库自动同步
 #+end_src
 
 ** Org-Roam-UI
 #+begin_src emacs-lisp
 (use-package org-roam-ui
-  :load-path "~/.emacs.d/site-lisp/org-roam-ui"
-  :after org-roam
+  :load-path "~/.emacs.d/site-lisp/org-roam-ui"  ; 设置org-roam-ui包的加载路径
+  :after org-roam  ; 确保在org-roam包加载后执行
   :config
+  ;; 设置浏览器功能，使用系统默认浏览器打开org-roam-ui界面
   (setq org-roam-ui-browser-function #'browse-url-default-browser))
 #+end_src
 
@@ -267,60 +316,67 @@
 ** cdlatex Configuration
 #+begin_src emacs-lisp
 (use-package cdlatex
-  :load-path "~/.emacs.d/site-lisp/cdlatex"
-  :hook (org-mode . org-cdlatex-mode)
+  :load-path "~/.emacs.d/site-lisp/cdlatex"  ; 设置cdlatex包的加载路径
+  :hook (org-mode . org-cdlatex-mode)        ; 在org-mode中自动启用cdlatex模式
   :config
+  ;; 定义数学符号快捷输入表
+  ;; 格式: ("快捷键" "符号" "大写形式")，nil表示无大写形式
   (setq cdlatex-math-symbol-alist
-        '(("p" "\\partial" "\\partial")
-          ("e" "\\varepsilon" "\\epsilon")
-          ("d" "\\delta" "\\Delta")
-          ("l" "\\lambda" "\\Lambda")
-          ("g" "\\gamma" "\\Gamma")
-          ("o" "\\omega" "\\Omega")
-          ("u" "\\nabla" nil)
-          ("s" "\\sigma" "\\Sigma")
-          ("i" "\\int\\limits_{-\\infty}^{\\infty}" nil)
-          ("8" "\\infty" nil)
-          ("I" "\\oint" nil)
-          ("*" "\\times" nil)
-          ("." "\\cdot" nil)
-          ("<" "\\langle" nil)
-          (">" "\\rangle" nil)
-          ("~" "\\tilde" nil)
-          ("^" "\\hat" nil)
-          ("/" "\\frac{?}{}"))
-        cdlatex-math-modify-alist
-        '(("b" "\\mathbf" nil t nil nil)
-          ("c" "\\mathcal" nil t nil nil)
-          ("B" "\\boldsymbol" nil t nil nil)
-          ("r" "\\mathrm" nil t nil nil)
-          ("v" "\\vec" nil t nil nil)))
+        '(("p" "\\partial" "\\partial")   ; 偏微分符号
+          ("e" "\\varepsilon" "\\epsilon") ; ε/ϵ符号
+          ("d" "\\delta" "\\Delta")      ; δ/Δ符号
+          ("l" "\\lambda" "\\Lambda")    ; λ/Λ符号
+          ("g" "\\gamma" "\\Gamma")      ; γ/Γ符号
+          ("o" "\\omega" "\\Omega")      ; ω/Ω符号
+          ("u" "\\nabla" nil)             ; 梯度算子
+          ("s" "\\sigma" "\\Sigma")      ; σ/Σ符号
+          ("i" "\\int\\limits_{-\\infty}^{\\infty}" nil) ; 积分符号
+          ("8" "\\infty" nil)             ; 无穷大符号
+          ("I" "\\oint" nil)              ; 环路积分
+          ("*" "\\times" nil)             ; 乘号
+          ("." "\\cdot" nil)              ; 点乘
+          ("<" "\\langle" nil)             ; 左尖括号
+          (">" "\\rangle" nil)            ; 右尖括号
+          ("~" "\\tilde" nil)             ; 波浪号修饰
+          ("^" "\\hat" nil)               ; 尖角修饰
+          ("/" "\\frac{?}{}")))           ; 分数模板
   
+  ;; 定义数学符号修饰符
+  ;; 格式: ("修饰键" "修饰命令" 是否作用于环境 是否作用于符号 是否作用于命令 是否作用于数字)
+  (setq cdlatex-math-modify-alist
+        '(("b" "\\mathbf" nil t nil nil)    ; 加粗修饰
+          ("c" "\\mathcal" nil t nil nil)  ; 花体修饰
+          ("B" "\\boldsymbol" nil t nil nil) ; 向量修饰
+          ("r" "\\mathrm" nil t nil nil)  ; 罗马体修饰
+          ("v" "\\vec" nil t nil nil)))    ; 向量修饰
+  
+  ;; 定义LaTeX环境模板
+  ;; 格式: ("环境名" "环境模板" 光标位置)
   (setq cdlatex-env-alist
         '(("eqn" "\\begin{equation}
 ?\\end{equation}"
-           nil)
+           nil)                              ; 单行公式环境
           ("ali" "\\begin{align}
 ?\\end{align}"
-           nil)
+           nil)                              ; 对齐公式环境
           ("gat" "\\begin{gather}
 ?\\end{gather}"
-           nil)
+           nil)                              ; 多行公式环境
           ("thm" "\\begin{theorem}
 ?\\end{theorem}"
-           nil)
+           nil)                              ; 定理环境
           ("lem" "\\begin{lemma}
 ?\\end{lemma}"
-           nil)
+           nil)                              ; 引理环境
           ("prf" "\\begin{proof}
 ?\\end{proof}"
-           nil)
+           nil)                              ; 证明环境
           ("def" "\\begin{definition}
 ?\\end{definition}"
-           nil)
+           nil)                              ; 定义环境
           ("prop" "\\begin{proposition}
 ?\\end{proposition}"
-           nil))))
+           nil))))                           ; 命题环境
 #+end_src
 
 * Bibliography Management
@@ -379,23 +435,26 @@
 ** org-ref Configuration
 #+begin_src emacs-lisp
 (use-package org-ref
-  :load-path "~/.emacs.d/site-lisp/org-ref"
-  :after (org dash f s parsebib helm-bibtex)
+  :load-path "~/.emacs.d/site-lisp/org-ref"  ; 设置org-ref包的加载路径
+  :after (org dash f s parsebib helm-bibtex)  ; 确保在这些依赖包加载后执行
   :config
-  (setq org-ref-default-bibliography '("~/org-roam/bibliography/references.bib")
-        org-ref-pdf-directory "~/org-roam/bibliography/pdfs/"
-        org-ref-notes-directory "~/org-roam/bibliography/notes/")
+  ;; 设置参考文献管理系统的默认路径
+  (setq org-ref-default-bibliography '("~/org-roam/bibliography/references.bib")  ; 默认参考文献库文件路径
+        org-ref-pdf-directory "~/org-roam/bibliography/pdfs/"  ; PDF文献存储目录
+        org-ref-notes-directory "~/org-roam/bibliography/notes/")  ; 文献笔记存储目录
   
+  ;; 自动创建必要的目录结构
   (unless (file-exists-p "~/org-roam/bibliography")
-    (make-directory "~/org-roam/bibliography" t))
+    (make-directory "~/org-roam/bibliography" t))  ; 创建主文献目录
   (unless (file-exists-p org-ref-pdf-directory)
-    (make-directory org-ref-pdf-directory t))
+    (make-directory org-ref-pdf-directory t))  ; 创建PDF存储目录
   (unless (file-exists-p org-ref-notes-directory)
-    (make-directory org-ref-notes-directory t))
+    (make-directory org-ref-notes-directory t))  ; 创建笔记存储目录
   
-  (setq org-ref-completion-library 'org-ref-ivy-cite
-        org-export-latex-format-toc-function 'org-export-latex-no-toc
-        org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
+  ;; 配置参考文献系统的其他参数
+  (setq org-ref-completion-library 'org-ref-ivy-cite  ; 使用ivy作为补全前端
+        org-export-latex-format-toc-function 'org-export-latex-no-toc  ; 禁用LaTeX导出时的目录生成
+        org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex  ; 使用helm-bibtex获取PDF文件名
         org-ref-note-title-format "* %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :AUTHOR: %a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"))
 #+end_src
 
@@ -403,23 +462,26 @@
 ** org-ai Configuration
 #+begin_src emacs-lisp
 (use-package org-ai
-  :load-path "~/.emacs.d/site-lisp/org-ai"
-  :after (org websocket)
+  :load-path "~/.emacs.d/site-lisp/org-ai"  ; 设置org-ai包的加载路径
+  :after (org websocket)  ; 确保在org和websocket包加载后执行
   :custom
-  (org-ai-default-chat-model "deepseek")
-  (org-ai-deepseek-api-key (getenv "DEEPSEEK_API_KEY"))
-  (org-ai-deepseek-api-base-url "https://api.deepseek.com/v1")
+  ;; AI模型配置
+  (org-ai-default-chat-model "deepseek-chat")  ; 设置默认聊天模型为deepseek
+  ;;(org-ai-deepseek-api-key (getenv "DEEPSEEK_API_KEY"))  ; 从环境变量获取Deepseek API密钥
+  (org-ai-deepseek-api-base-url "https://api.deepseek.com/v1")  ; Deepseek API基础URL
   
-  (org-ai-openai-api-key (getenv "OPENAI_API_KEY"))
-  (org-ai-anthropic-api-key (getenv "ANTHROPIC_API_KEY"))
+  ;; 其他AI服务API密钥配置
+  ;;(org-ai-openai-api-key (getenv "OPENAI_API_KEY"))  ; OpenAI API密钥
+  ;;(org-ai-anthropic-api-key (getenv "ANTHROPIC_API_KEY"))  ; Anthropic API密钥
   
+  ;; 预定义提示模板
   (org-ai-prompt-templates
-   '(("math-explain" . "请详细解释以下数学概念或定理：\n\n$x")
-     ("math-proof" . "请提供以下定理的详细证明：\n\n$x")
-     ("math-example" . "请提供一个关于$x的具体例子，并详细解释")
-     ("pde-solve" . "请解决以下偏微分方程问题并详细说明解法步骤：\n\n$x")
-     ("latex-fix" . "请修正以下LaTeX代码中的错误：\n\n$x")
-     ("summarize-paper" . "请总结以下研究论文的主要内容、方法和贡献：\n\n$x")))
+   '(("math-explain" . "请详细解释以下数学概念或定理：\n\n$x")  ; 数学概念解释模板
+     ("math-proof" . "请提供以下定理的详细证明：\n\n$x")  ; 定理证明模板
+     ("math-example" . "请提供一个关于$x的具体例子，并详细解释")  ; 数学示例模板
+     ("pde-solve" . "请解决以下偏微分方程问题并详细说明解法步骤：\n\n$x")  ; PDE求解模板
+     ("latex-fix" . "请修正以下LaTeX代码中的错误：\n\n$x")  ; LaTeX修正模板
+     ("summarize-paper" . "请总结以下研究论文的主要内容、方法和贡献：\n\n$x")))  ; 论文总结模板
   
   :config
   (org-ai-global-mode)
@@ -462,8 +524,12 @@
 ** Hydra Menu for Math Notes
 #+begin_src emacs-lisp
 (use-package hydra
-  :load-path "~/.emacs.d/site-lisp/hydra"
+  :load-path "~/.emacs.d/site-lisp/hydra"  ; 设置hydra包的加载路径
   :config
+  ;; 定义数学笔记操作的水合菜单
+  ;; 水合菜单提供了一种交互式界面，通过快捷键快速访问常用功能
+  ;; :color blue - 设置菜单颜色为蓝色
+  ;; :hint nil - 不显示默认提示信息，使用自定义布局
   (defhydra hydra-math-notes (:color blue :hint nil)
     "
 ^笔记操作^          ^公式^              ^引用^           ^AI辅助^
@@ -473,40 +539,74 @@ _i_: 插入链接      _n_: 新公式块      _b_: 打开文献    _P_: AI证明
 _t_: 添加标签      _a_: 对齐环境      _r_: 刷新文献    _S_: AI求解PDE
 _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
 "
-    ("f" org-roam-node-find)
-    ("i" org-roam-node-insert)
-    ("t" org-roam-tag-add)
-    ("d" (org-roam-capture- :node (org-roam-node-create) :templates '(("d" "默认" plain "%?" :target (file+head "${slug}.org" "#+title: ${title}\n") :unnarrowed t))))
-    ("e" org-cdlatex-environment)
-    ("n" (lambda () (interactive) (insert "\\begin{equation}\n\n\\end{equation}") (forward-line -1)))
-    ("a" (lambda () (interactive) (insert "\\begin{align}\n\n\\end{align}") (forward-line -1)))
-    ("s" cdlatex-math-symbol)
-    ("c" org-ref-cite-insert-ivy)
-    ("b" org-ref-open-bibtex-notes)
-    ("r" org-ref-bibliography-refresh)
-    ("p" org-latex-preview)
-    ("E" my/org-ai-math-explain)
-    ("P" my/org-ai-math-proof)
-    ("S" my/org-ai-pde-solve)
-    ("C" org-ai-chat)
-    ("q" nil "退出" :color blue))
+    ;; 笔记操作相关功能
+    ("f" org-roam-node-find)       ; 查找并打开org-roam笔记
+    ("i" org-roam-node-insert)     ; 插入org-roam笔记链接
+    ("t" org-roam-tag-add)         ; 为当前笔记添加标签
+    ("d" (org-roam-capture- :node (org-roam-node-create) :templates '(("d" "默认" plain "%?" :target (file+head "${slug}.org" "#+title: ${title}\n") :unnarrowed t))))  ; 快速创建日常笔记
+    
+    ;; LaTeX公式编辑功能
+    ("e" org-cdlatex-environment)  ; 插入LaTeX环境
+    ("n" (lambda () (interactive) (insert "\\begin{equation}\n\n\\end{equation}") (forward-line -1)))  ; 插入单行公式环境
+    ("a" (lambda () (interactive) (insert "\\begin{align}\n\n\\end{align}") (forward-line -1)))  ; 插入对齐公式环境
+    ("s" cdlatex-math-symbol)      ; 插入数学符号
+    
+    ;; 文献引用功能
+    ("c" org-ref-cite-insert-ivy)  ; 插入文献引用
+    ("b" org-ref-open-bibtex-notes) ; 打开文献笔记
+    ("r" org-ref-bibliography-refresh) ; 刷新文献数据库
+    ("p" org-latex-preview)        ; 预览LaTeX公式
+    
+    ;; AI辅助功能
+    ("E" my/org-ai-math-explain)  ; AI解释数学概念
+    ("P" my/org-ai-math-proof)    ; AI提供数学证明
+    ("S" my/org-ai-pde-solve)     ; AI求解偏微分方程
+    ("C" org-ai-chat)             ; 与AI对话
+    
+    ("q" nil "退出" :color blue))  ; 退出水合菜单
   
+  ;; 将水合菜单绑定到快捷键C-c m
   (global-set-key (kbd "C-c m") 'hydra-math-notes/body))
 #+end_src
 
 ** Org Capture Templates
 #+begin_src emacs-lisp
 (with-eval-after-load 'org
+  ;; 设置Org模式捕获模板
+  ;; 捕获模板格式: ("键" "描述" 类型 目标位置 模板内容)
   (setq org-capture-templates
-        '(("t" "待办事项" entry
+        '(;; 待办事项模板
+          ;; 键: t, 描述: "待办事项"
+          ;; 类型: entry (条目)
+          ;; 目标位置: ~/org-roam/gtd.org文件的Tasks标题下
+          ;; 模板内容: 以TODO开头的条目，包含%?(光标位置)、%i(初始内容)和%a(来源链接)
+          ("t" "待办事项" entry
            (file+headline "~/org-roam/gtd.org" "Tasks")
            "* TODO %?\n  %i\n  %a")
+          
+          ;; 研究笔记模板
+          ;; 键: n, 描述: "研究笔记"
+          ;; 类型: entry (条目)
+          ;; 目标位置: ~/org-roam/research_notes.org文件的Notes标题下
+          ;; 模板内容: 普通条目，包含%?(光标位置)、%U(时间戳)和%i(初始内容)
           ("n" "研究笔记" entry
            (file+headline "~/org-roam/research_notes.org" "Notes")
            "* %?\n  %U\n  %i")
+          
+          ;; 研究日志模板
+          ;; 键: j, 描述: "研究日志"
+          ;; 类型: entry (条目)
+          ;; 目标位置: ~/org-roam/research_journal.org文件的日期树中
+          ;; 模板内容: 普通条目，包含%?(光标位置)、%U(时间戳)和%i(初始内容)
           ("j" "研究日志" entry
            (file+datetree "~/org-roam/research_journal.org")
            "* %?\n  %U\n  %i")
+          
+          ;; 研究想法模板
+          ;; 键: i, 描述: "研究想法"
+          ;; 类型: entry (条目)
+          ;; 目标位置: ~/org-roam/research_ideas.org文件的Ideas标题下
+          ;; 模板内容: 普通条目，包含%?(光标位置)、%U(时间戳)和%i(初始内容)
           ("i" "研究想法" entry
            (file+headline "~/org-roam/research_ideas.org" "Ideas")
            "* %?\n  %U\n  %i"))))
@@ -516,20 +616,25 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
 ** Meow Configuration
 #+begin_src emacs-lisp
 (use-package meow
-  :load-path "~/.emacs.d/site-lisp/meow"
+  :load-path "~/.emacs.d/site-lisp/meow"  ; 设置meow包的加载路径
   :init
-  (require 'meow-cheatsheet-layout)
-  (require 'meow)
+  (require 'meow-cheatsheet-layout)  ; 加载快捷键帮助布局
+  (require 'meow)  ; 加载meow主模块
   
   (defun meow-setup-mac ()
+    "配置macOS平台下的meow键位绑定"
+    ;; 设置QWERTY键盘布局的快捷键帮助
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
     
+    ;; 定义运动模式下的键位绑定
     (meow-motion-define-key
-     '("j" . meow-next)
-     '("k" . meow-prev)
-     '("<escape>" . ignore))
+     '("j" . meow-next)  ; 向下移动
+     '("k" . meow-prev)  ; 向上移动
+     '("<escape>" . ignore))  ; 忽略ESC键
     
+    ;; 定义leader键(默认是SPC)的快捷键绑定
     (meow-leader-define-key
+     ;; 数字参数
      '("1" . meow-digit-argument)
      '("2" . meow-digit-argument)
      '("3" . meow-digit-argument)
@@ -541,22 +646,26 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
      '("9" . meow-digit-argument)
      '("0" . meow-digit-argument)
      
-     '("b" . consult-buffer)
-     '("f" . find-file)
-     '("w" . save-buffer)
-     '("k" . kill-this-buffer)
-     '("s" . save-some-buffers)
-     '("d" . dired-jump)
-     '("o" . delete-other-windows)
-     '("v" . split-window-vertically)
-     '("h" . split-window-horizontally)
-     '("p" . project-find-file)
-     '("g" . magit-status)
+     ;; 常用功能
+     '("b" . consult-buffer)  ; 切换缓冲区
+     '("f" . find-file)  ; 打开文件
+     '("w" . save-buffer)  ; 保存当前缓冲区
+     '("k" . kill-this-buffer)  ; 关闭当前缓冲区
+     '("s" . save-some-buffers)  ; 保存所有缓冲区
+     '("d" . dired-jump)  ; 跳转到目录
+     '("o" . delete-other-windows)  ; 删除其他窗口
+     '("v" . split-window-vertically)  ; 垂直分割窗口
+     '("h" . split-window-horizontally)  ; 水平分割窗口
+     '("p" . project-find-file)  ; 在项目中查找文件
+     '("g" . magit-status)  ; 打开magit状态
      
-     '("/" . meow-keypad-describe-key)
-     '("?" . meow-cheatsheet))
+     ;; 帮助功能
+     '("/" . meow-keypad-describe-key)  ; 描述键位功能
+     '("?" . meow-cheatsheet))  ; 显示快捷键帮助
     
+    ;; 定义普通模式下的键位绑定
     (meow-normal-define-key
+     ;; 数字扩展
      '("0" . meow-expand-0)
      '("9" . meow-expand-9)
      '("8" . meow-expand-8)
@@ -567,74 +676,83 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
      '("3" . meow-expand-3)
      '("2" . meow-expand-2)
      '("1" . meow-expand-1)
-     '("-" . negative-argument)
-     '(";" . meow-reverse)
-     '("," . meow-inner-of-thing)
-     '("." . meow-bounds-of-thing)
-     '("[" . meow-beginning-of-thing)
-     '("]" . meow-end-of-thing)
-     '("a" . meow-append)
-     '("A" . meow-open-below)
-     '("b" . meow-back-word)
-     '("B" . meow-back-symbol)
-     '("c" . meow-change)
-     '("d" . meow-delete)
-     '("D" . meow-backward-delete)
-     '("e" . meow-next-word)
-     '("E" . meow-next-symbol)
-     '("f" . meow-find)
-     '("g" . meow-cancel-selection)
-     '("G" . meow-grab)
-     '("h" . meow-left)
-     '("H" . meow-left-expand)
-     '("i" . meow-insert)
-     '("I" . meow-open-above)
-     '("j" . meow-next)
-     '("J" . meow-next-expand)
-     '("k" . meow-prev)
-     '("K" . meow-prev-expand)
-     '("l" . meow-right)
-     '("L" . meow-right-expand)
-     '("m" . meow-join)
-     '("o" . meow-block)
-     '("O" . meow-to-block)
-     '("p" . meow-yank)
-     '("q" . meow-quit)
-     '("Q" . meow-goto-line)
-     '("r" . meow-replace)
-     '("R" . meow-swap-grab)
-     '("s" . meow-kill)
-     '("t" . meow-till)
-     '("u" . meow-undo)
-     '("U" . meow-undo-in-selection)
-     '("v" . meow-visit)
-     '("w" . meow-mark-word)
-     '("W" . meow-mark-symbol)
-     '("x" . meow-line)
-     '("X" . meow-goto-line)
-     '("y" . meow-save)
-     '("Y" . meow-sync-grab)
-     '("z" . meow-pop-selection)
-     '("'" . repeat)
-     '("<escape>" . ignore)))
+     '("-" . negative-argument)  ; 负数参数
+     
+     ;; 导航与选择
+     '(";" . meow-reverse)  ; 反转选择方向
+     '("," . meow-inner-of-thing)  ; 选择对象内部
+     '("." . meow-bounds-of-thing)  ; 选择对象边界
+     '("[" . meow-beginning-of-thing)  ; 移动到对象开始
+     '("]" . meow-end-of-thing)  ; 移动到对象结束
+     
+     ;; 编辑操作
+     '("a" . meow-append)  ; 在光标后插入
+     '("A" . meow-open-below)  ; 在下方插入新行
+     '("b" . meow-back-word)  ; 向后移动一个单词
+     '("B" . meow-back-symbol)  ; 向后移动一个符号
+     '("c" . meow-change)  ; 修改选中内容
+     '("d" . meow-delete)  ; 删除选中内容
+     '("D" . meow-backward-delete)  ; 向后删除
+     '("e" . meow-next-word)  ; 向前移动一个单词
+     '("E" . meow-next-symbol)  ; 向前移动一个符号
+     '("f" . meow-find)  ; 查找字符
+     '("g" . meow-cancel-selection)  ; 取消选择
+     '("G" . meow-grab)  ; 抓取选择
+     '("h" . meow-left)  ; 向左移动
+     '("H" . meow-left-expand)  ; 向左扩展选择
+     '("i" . meow-insert)  ; 在光标前插入
+     '("I" . meow-open-above)  ; 在上方插入新行
+     '("j" . meow-next)  ; 向下移动
+     '("J" . meow-next-expand)  ; 向下扩展选择
+     '("k" . meow-prev)  ; 向上移动
+     '("K" . meow-prev-expand)  ; 向上扩展选择
+     '("l" . meow-right)  ; 向右移动
+     '("L" . meow-right-expand)  ; 向右扩展选择
+     '("m" . meow-join)  ; 合并行
+     '("o" . meow-block)  ; 选择块
+     '("O" . meow-to-block)  ; 移动到块
+     '("p" . meow-yank)  ; 粘贴
+     '("q" . meow-quit)  ; 退出
+     '("Q" . meow-goto-line)  ; 跳转到行
+     '("r" . meow-replace)  ; 替换
+     '("R" . meow-swap-grab)  ; 交换抓取
+     '("s" . meow-kill)  ; 剪切
+     '("t" . meow-till)  ; 移动到字符前
+     '("u" . meow-undo)  ; 撤销
+     '("U" . meow-undo-in-selection)  ; 在选择中撤销
+     '("v" . meow-visit)  ; 访问
+     '("w" . meow-mark-word)  ; 标记单词
+     '("W" . meow-mark-symbol)  ; 标记符号
+     '("x" . meow-line)  ; 选择行
+     '("X" . meow-goto-line)  ; 跳转到行
+     '("y" . meow-save)  ; 保存
+     '("Y" . meow-sync-grab)  ; 同步抓取
+     '("z" . meow-pop-selection)  ; 弹出选择
+     '("'" . repeat)  ; 重复
+     '("<escape>" . ignore))  ; 忽略ESC键
   
+  ;; 应用macOS特定的键位配置
   (meow-setup-mac)
   
-  (setq mac-command-modifier 'meta)
-  (setq mac-option-modifier 'super)
-  (setq mac-right-option-modifier 'none)
+  ;; 设置macOS修饰键映射
+  (setq mac-command-modifier 'meta)  ; Command键作为Meta键
+  (setq mac-option-modifier 'super)  ; Option键作为Super键
+  (setq mac-right-option-modifier 'none)  ; 右侧Option键不修改
   
   :config
-  (setq meow-cursor-type-normal 'box)
-  (setq meow-cursor-type-insert '(bar . 2))
-  (setq meow-cursor-type-motion 'hollow)
+  ;; 设置不同模式下的光标类型
+  (setq meow-cursor-type-normal 'box)  ; 普通模式: 方块光标
+  (setq meow-cursor-type-insert '(bar . 2))  ; 插入模式: 竖线光标(高度2)
+  (setq meow-cursor-type-motion 'hollow)  ; 运动模式: 空心方块
   
+  ;; 设置状态名称替换表
   (setq meow-replace-state-name-alist
-        '((normal . "N")
-          (insert . "I")
-          (motion . "M")
-          (keypad . "K")))
+        '((normal . "N")  ; 普通模式
+          (insert . "I")  ; 插入模式
+          (motion . "M")  ; 运动模式
+          (keypad . "K")))  ; 键位模式
   
+  ;; 启用全局meow模式
   (meow-global-mode 1))
 #+end_src
 
@@ -654,30 +772,36 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
 ** Meow Integration
 #+begin_src emacs-lisp
 (with-eval-after-load 'meow
-  (add-to-list 'meow-mode-state-list '(pdf-view-mode . motion))
-  (add-to-list 'meow-mode-state-list '(dired-mode . motion))
-  (add-to-list 'meow-mode-state-list '(org-agenda-mode . motion))
-  (add-to-list 'meow-mode-state-list '(magit-status-mode . motion))
-  (add-to-list 'meow-mode-state-list '(helpful-mode . motion))
-  (add-to-list 'meow-mode-state-list '(help-mode . motion))
+  ;; 设置不同模式下的默认状态
+  ;; 以下模式使用motion状态（移动模式）
+  (add-to-list 'meow-mode-state-list '(pdf-view-mode . motion))  ; PDF查看模式
+  (add-to-list 'meow-mode-state-list '(dired-mode . motion))    ; 文件管理器模式
+  (add-to-list 'meow-mode-state-list '(org-agenda-mode . motion)) ; Org日程模式
+  (add-to-list 'meow-mode-state-list '(magit-status-mode . motion)) ; Git状态模式
+  (add-to-list 'meow-mode-state-list '(helpful-mode . motion))  ; 帮助模式
+  (add-to-list 'meow-mode-state-list '(help-mode . motion))     ; 帮助模式
   
+  ;; Org模式使用normal状态（普通模式）
   (add-to-list 'meow-mode-state-list '(org-mode . normal))
+  ;; 在普通模式下绑定TAB键为org-cycle（折叠/展开Org标题）
   (meow-define-keys
    'normal
    '("TAB" . org-cycle))
   
+  ;; 集成ace-pinyin中文跳转功能
   (with-eval-after-load 'ace-pinyin
     (meow-define-keys
      'normal
-     '("v" . ace-pinyin-jump-char-2)
-     '("V" . ace-pinyin-jump-char-in-line)))
+     '("v" . ace-pinyin-jump-char-2)      ; 按拼音首字母跳转字符
+     '("V" . ace-pinyin-jump-char-in-line))) ; 在当前行按拼音首字母跳转
   
+  ;; 集成org-roam快捷键
   (with-eval-after-load 'org-roam
     (meow-leader-define-key
-     '("n f" . org-roam-node-find)
-     '("n i" . org-roam-node-insert)
-     '("n c" . org-roam-capture)
-     '("n l" . org-roam-buffer-toggle))))
+     '("n f" . org-roam-node-find)    ; 查找节点
+     '("n i" . org-roam-node-insert)  ; 插入链接
+     '("n c" . org-roam-capture)      ; 捕获新笔记
+     '("n l" . org-roam-buffer-toggle)))) ; 切换侧边栏
 
 (defun meow-debug-info ()
   "显示 Meow 的调试信息。"

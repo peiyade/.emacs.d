@@ -1,0 +1,1 @@
+(setq org-ai-deepseek-api-key "sk-0e65fa288fde43b3b04ebb65bece0fa3")
