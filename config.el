@@ -1,31 +1,22 @@
-;; 关闭启动画面
 (setq inhibit-startup-message t)
 
-;; 关闭工具栏、菜单栏、滚动条
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 
-;; 设置默认编码
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 
-;; 备份文件设置
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
 
-;; 添加 load-path
 (let ((default-directory "~/.emacs.d/site-lisp/"))
   (normal-top-level-add-subdirs-to-load-path))
 
-;; 加载 use-package (假设已通过 git submodule 添加)
 (require 'use-package)
-
-;; 不需要确保包已安装，因为我们使用 git submodule
 (setq use-package-always-ensure nil)
-
 (add-to-list 'load-path "~/.emacs.d/site-lisp/use-package")
 (require 'use-package)
 
@@ -34,7 +25,6 @@
   (add-to-list 'Info-directory-list
                "~/.emacs.d/site-lisp/use-package/"))
 
-;; 现代化补全框架
 (use-package vertico
   :load-path "~/.emacs.d/site-lisp/vertico"
   :init
@@ -55,17 +45,21 @@
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
-;; 使用 Emacs 内置的 org-mode
+(use-package marginalia
+  :load-path "~/.emacs.d/site-lisp/marginalia"
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+  :init
+  (require 'marginalia)
+  (marginalia-mode))
+
 (use-package org
-  :ensure nil  ; 不需要安装，使用内置的
+  :ensure nil
   :config
-  ;; 美化设置
   (setq org-ellipsis " ▾ ")
   (setq org-hide-emphasis-markers t)
-  ;; 标题美化
   (setq org-startup-indented t)
   (setq org-indent-mode-turns-on-hiding-stars t)
-  ;; 设置不同级别标题的大小
   (custom-set-faces
    '(org-level-1 ((t (:inherit outline-1 :height 1.3))))
    '(org-level-2 ((t (:inherit outline-2 :height 1.2))))
@@ -73,25 +67,21 @@
    '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
    '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
   
-  ;; 设置标题缩进
   (setq org-indent-indentation-per-level 2))
 
-;; 单独配置 org-id，确保在 org 加载后
 (use-package org-id
   :after org
   :ensure nil
   :config
-  (setq org-id-method 'ts)  ; 使用时间戳方法
+  (setq org-id-method 'ts)
   (setq org-id-track-globally t)
   (setq org-id-locations-file "~/.emacs.d/.org-id-locations"))
 
-;; 设置 Org Babel 支持的语言
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((emacs-lisp . t)
    (shell . t)))
 
-;; 自动生成 config.el
 (defun tangle-config-org ()
   "Tangle config.org on save."
   (when (equal (buffer-file-name) 
@@ -120,26 +110,14 @@
   :load-path "~/.emacs.d/site-lisp/pdf-tools/lisp/"
   :magic ("%PDF" . pdf-view-mode)
   :config
-  ;; 初始化 pdf-tools
   (pdf-tools-install)
-  
-  ;; 使用 pdf-tools 打开 PDF 文件
   (setq-default pdf-view-display-size 'fit-page)
-  
-  ;; 禁用 pdf-view-mode 中的行号显示
   (add-hook 'pdf-view-mode-hook (lambda () 
                                   (display-line-numbers-mode -1)))
-  
-  ;; 启用 pdf-annot-minor-mode 以支持注释功能
   (add-hook 'pdf-view-mode-hook 'pdf-annot-minor-mode)
-  
-  ;; 启用 pdf-outline-minor-mode 以支持大纲功能
   (add-hook 'pdf-view-mode-hook 'pdf-outline-minor-mode)
-  
-  ;; 启用 pdf-sync-minor-mode 以支持同步功能
   (add-hook 'pdf-view-mode-hook 'pdf-sync-minor-mode))
 
-;; 添加 PDF 到 Org Babel 支持的语言中
 (with-eval-after-load 'org
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -147,14 +125,12 @@
      (shell . t)
      (latex . t))))
 
-;; 设置 Org 导出 PDF 时使用 pdf-tools 打开
 (setq org-file-apps
       '((auto-mode . emacs)
         ("\\.mm\\'" . default)
         ("\\.x?html?\\'" . default)
         ("\\.pdf\\'" . "emacs %s")))
 
-;; Org-Roam 配置
 (use-package org-roam
   :load-path "~/.emacs.d/site-lisp/org-roam"
   :custom
@@ -193,13 +169,11 @@
          (:map org-mode-map
           ("C-M-i" . completion-at-point)))
   :config
-  ;; 配置org-roam-ui
   (setq org-roam-ui-sync-theme t
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t)
   
-  ;; 创建必要的目录
   (unless (file-exists-p org-roam-directory)
     (make-directory org-roam-directory t))
   (unless (file-exists-p (expand-file-name "math" org-roam-directory))
@@ -211,22 +185,18 @@
   (unless (file-exists-p (expand-file-name "research" org-roam-directory))
     (make-directory (expand-file-name "research" org-roam-directory) t))
   
-  ;; 启动org-roam
   (org-roam-db-autosync-mode))
 
-;; Org-Roam-UI配置
 (use-package org-roam-ui
   :load-path "~/.emacs.d/site-lisp/org-roam-ui"
   :after org-roam
   :config
   (setq org-roam-ui-browser-function #'browse-url-default-browser))
 
-;; LaTeX 和数学公式输入增强
 (use-package cdlatex
   :load-path "~/.emacs.d/site-lisp/cdlatex"
   :hook (org-mode . org-cdlatex-mode)
   :config
-  ;; 自定义数学符号输入
   (setq cdlatex-math-symbol-alist
         '(("p" "\\partial" "\\partial")
           ("e" "\\varepsilon" "\\epsilon")
@@ -253,7 +223,6 @@
           ("r" "\\mathrm" nil t nil nil)
           ("v" "\\vec" nil t nil nil)))
   
-  ;; 自定义环境模板
   (setq cdlatex-env-alist
         '(("eqn" "\\begin{equation}
 ?\\end{equation}"
@@ -279,8 +248,6 @@
           ("prop" "\\begin{proposition}
 ?\\end{proposition}"
            nil))))
-
-;; 配置org-ref用于文献管理
 
 (use-package compat
   :load-path "~/.emacs.d/site-lisp/compat")
@@ -331,8 +298,6 @@
   :load-path "~/.emacs.d/site-lisp/helm-bibtex"
   :after (helm))
 
-
-
 (use-package org-ref
   :load-path "~/.emacs.d/site-lisp/org-ref"
   :after (org dash f s parsebib helm-bibtex)
@@ -341,7 +306,6 @@
         org-ref-pdf-directory "~/org-roam/bibliography/pdfs/"
         org-ref-notes-directory "~/org-roam/bibliography/notes/")
   
-  ;; 创建必要的目录
   (unless (file-exists-p "~/org-roam/bibliography")
     (make-directory "~/org-roam/bibliography" t))
   (unless (file-exists-p org-ref-pdf-directory)
@@ -349,27 +313,22 @@
   (unless (file-exists-p org-ref-notes-directory)
     (make-directory org-ref-notes-directory t))
   
-  ;; 设置引用格式
   (setq org-ref-completion-library 'org-ref-ivy-cite
         org-export-latex-format-toc-function 'org-export-latex-no-toc
         org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
         org-ref-note-title-format "* %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :AUTHOR: %a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"))
 
-;; 配置org-ai与大模型集成
 (use-package org-ai
   :load-path "~/.emacs.d/site-lisp/org-ai"
   :after (org websocket)
   :custom
-  ;; DeepSeek配置
   (org-ai-default-chat-model "deepseek")
   (org-ai-deepseek-api-key (getenv "DEEPSEEK_API_KEY"))
   (org-ai-deepseek-api-base-url "https://api.deepseek.com/v1")
   
-  ;; 其他模型配置
   (org-ai-openai-api-key (getenv "OPENAI_API_KEY"))
   (org-ai-anthropic-api-key (getenv "ANTHROPIC_API_KEY"))
   
-  ;; 提示模板
   (org-ai-prompt-templates
    '(("math-explain" . "请详细解释以下数学概念或定理：\n\n$x")
      ("math-proof" . "请提供以下定理的详细证明：\n\n$x")
@@ -379,10 +338,8 @@
      ("summarize-paper" . "请总结以下研究论文的主要内容、方法和贡献：\n\n$x")))
   
   :config
-  ;; 启用org-ai功能
   (org-ai-global-mode)
   
-  ;; 自定义函数：快速插入数学解释
   (defun my/org-ai-math-explain ()
     "使用AI解释选中的数学内容"
     (interactive)
@@ -392,7 +349,6 @@
           (insert (format "\n** AI解释\n#+begin_ai\n请详细解释以下数学概念或定理：\n\n%s\n#+end_ai\n" content)))
       (message "请先选择要解释的数学内容")))
   
-  ;; 自定义函数：快速生成证明
   (defun my/org-ai-math-proof ()
     "使用AI生成选中定理的证明"
     (interactive)
@@ -402,7 +358,6 @@
           (insert (format "\n** AI证明\n#+begin_ai\n请提供以下定理的详细证明：\n\n%s\n#+end_ai\n" content)))
       (message "请先选择要证明的定理")))
   
-  ;; 自定义函数：PDE求解辅助
   (defun my/org-ai-pde-solve ()
     "使用AI辅助解决PDE问题"
     (interactive)
@@ -412,18 +367,15 @@
           (insert (format "\n** AI求解\n#+begin_ai\n请解决以下偏微分方程问题并详细说明解法步骤：\n\n%s\n#+end_ai\n" content)))
       (message "请先选择要求解的PDE问题")))
   
-  ;; 绑定快捷键
   (global-set-key (kbd "C-c a e") 'my/org-ai-math-explain)
   (global-set-key (kbd "C-c a p") 'my/org-ai-math-proof)
   (global-set-key (kbd "C-c a s") 'my/org-ai-pde-solve)
   (global-set-key (kbd "C-c a i") 'org-ai-prompt)
   (global-set-key (kbd "C-c a c") 'org-ai-chat))
 
-;; 数学研究相关快捷键优化
 (use-package hydra
   :load-path "~/.emacs.d/site-lisp/hydra"
   :config
-  ;; 创建数学笔记相关操作的hydra菜单
   (defhydra hydra-math-notes (:color blue :hint nil)
     "
 ^笔记操作^          ^公式^              ^引用^           ^AI辅助^
@@ -451,10 +403,8 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
     ("C" org-ai-chat)
     ("q" nil "退出" :color blue))
   
-  ;; 绑定全局快捷键
   (global-set-key (kbd "C-c m") 'hydra-math-notes/body))
 
-;; 配置org-capture模板
 (with-eval-after-load 'org
   (setq org-capture-templates
         '(("t" "待办事项" entry
@@ -470,29 +420,21 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
            (file+headline "~/org-roam/research_ideas.org" "Ideas")
            "* %?\n  %U\n  %i"))))
 
-;; Meow 模态编辑配置
 (use-package meow
   :load-path "~/.emacs.d/site-lisp/meow"
   :init
-  ;; 加载布局定义文件
   (require 'meow-cheatsheet-layout)
-  ;; 加载meow核心模块
   (require 'meow)
   
-  ;; 为 macOS 优化的 Meow 设置
   (defun meow-setup-mac ()
-    ;; 设置 QWERTY 布局
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
     
-    ;; 移动模式键位
     (meow-motion-define-key
      '("j" . meow-next)
      '("k" . meow-prev)
      '("<escape>" . ignore))
     
-    ;; Leader 键设置 (使用空格键)
     (meow-leader-define-key
-     ;; 数字参数
      '("1" . meow-digit-argument)
      '("2" . meow-digit-argument)
      '("3" . meow-digit-argument)
@@ -504,7 +446,6 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
      '("9" . meow-digit-argument)
      '("0" . meow-digit-argument)
      
-     ;; 常用命令
      '("b" . consult-buffer)
      '("f" . find-file)
      '("w" . save-buffer)
@@ -517,11 +458,9 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
      '("p" . project-find-file)
      '("g" . magit-status)
      
-     ;; 帮助
      '("/" . meow-keypad-describe-key)
      '("?" . meow-cheatsheet))
     
-    ;; 普通模式键位
     (meow-normal-define-key
      '("0" . meow-expand-0)
      '("9" . meow-expand-9)
@@ -562,7 +501,6 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
      '("l" . meow-right)
      '("L" . meow-right-expand)
      '("m" . meow-join)
-     '("n" . meow-search)
      '("o" . meow-block)
      '("O" . meow-to-block)
      '("p" . meow-yank)
@@ -585,47 +523,35 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
      '("'" . repeat)
      '("<escape>" . ignore)))
   
-  ;; 调用设置函数
   (meow-setup-mac)
   
-  ;; Mac 特定优化
-  (setq mac-command-modifier 'meta)       ;; 将 Command 键映射为 Meta
-  (setq mac-option-modifier 'super)       ;; 将 Option 键映射为 Super
-  (setq mac-right-option-modifier 'none)  ;; 右 Option 键保持原样，用于输入特殊字符
+  (setq mac-command-modifier 'meta)
+  (setq mac-option-modifier 'super)
+  (setq mac-right-option-modifier 'none)
   
-  ;; 启用 meow 全局模式
   :config
-  ;; 设置模式指示器
   (setq meow-cursor-type-normal 'box)
   (setq meow-cursor-type-insert '(bar . 2))
   (setq meow-cursor-type-motion 'hollow)
   
-  ;; 自定义模式行指示器
   (setq meow-replace-state-name-alist
         '((normal . "N")
           (insert . "I")
           (motion . "M")
           (keypad . "K")))
   
-  ;; 启用全局模式
   (meow-global-mode 1))
 
-;; 加载 pinyinlib
 (use-package pinyinlib
   :load-path "~/.emacs.d/site-lisp/pinyinlib.el")
 
-;; 加载 ace-pinyin
 (use-package ace-pinyin
   :init
-  ;; 使用 avy 作为后端
   (setq ace-pinyin-use-avy t)
   :config
-  ;; 启用全局模式，支持中文拼音首字母跳转
   (ace-pinyin-global-mode +1))
 
-;; Meow 与其他模式的集成
 (with-eval-after-load 'meow
-  ;; 为特定模式设置初始状态
   (add-to-list 'meow-mode-state-list '(pdf-view-mode . motion))
   (add-to-list 'meow-mode-state-list '(dired-mode . motion))
   (add-to-list 'meow-mode-state-list '(org-agenda-mode . motion))
@@ -633,21 +559,17 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
   (add-to-list 'meow-mode-state-list '(helpful-mode . motion))
   (add-to-list 'meow-mode-state-list '(help-mode . motion))
   
-  ;; 为 org-mode 添加特定键位
   (add-to-list 'meow-mode-state-list '(org-mode . normal))
   (meow-define-keys
    'normal
    '("TAB" . org-cycle))
   
-  ;; 为 ace-pinyin 添加 meow 快捷键
   (with-eval-after-load 'ace-pinyin
-    ;; 在普通模式下使用 'v' 键触发 ace-pinyin-char-2，'V' 键触发 ace-pinyin-in-line
     (meow-define-keys
      'normal
      '("v" . ace-pinyin-jump-char-2)
      '("V" . ace-pinyin-jump-char-in-line)))
   
-  ;; 为 org-roam 添加特定键位
   (with-eval-after-load 'org-roam
     (meow-leader-define-key
      '("n f" . org-roam-node-find)
@@ -655,7 +577,6 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
      '("n c" . org-roam-capture)
      '("n l" . org-roam-buffer-toggle))))
 
-;; Meow 调试辅助函数
 (defun meow-debug-info ()
   "显示 Meow 的调试信息。"
   (interactive)
@@ -681,7 +602,6 @@ _d_: 日常笔记      _s_: 插入符号      _p_: 预览PDF     _C_: AI对话
       (insert (format "%d\n" (length (cdr (assoc 'leader meow--kbd-alist))))))
     (switch-to-buffer buf)))
 
-;; 绑定调试快捷键
 (with-eval-after-load 'meow
   (meow-leader-define-key
    '("M-d" . meow-debug-info)))

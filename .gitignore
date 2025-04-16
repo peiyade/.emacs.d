@@ -8,6 +8,7 @@ auto-save-list/
 
 # 备份文件
 backups/
+config copy.el
 
 # 自动生成的配置文件
 config.el
