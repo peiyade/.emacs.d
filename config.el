@@ -63,91 +63,83 @@
 
 ;; Consult: 增强搜索功能，提供更智能的查找命令
 ;; C-s: 行内搜索 | C-r: 历史记录 | M-y: 粘贴历史 | C-x b: 缓冲区切换 | C-c f: 文件查找
-;; TODO 无法处理 C-c f 不是find-file的状态
 (use-package consult
   :load-path "~/.emacs.d/site-lisp/consult"
   :bind (("C-s" . consult-line)
          ;;("C-r". consult-history)
-         ("M-y" . consult-yank-pop)
-         ("C-x b" . consult-buffer)
-         ("C-c f" . consult-find))
-  :config
-  (global-unset-key (kbd "C-c f"))
-  (global-set-key (kbd "C-c f") 'consult-find)
-  )
-
-
+         ("M-y". consult-yank-pop)
+         ;;("C-c f" . consult-find)
+         ("C-x b" . consult-buffer)))
 
 ;; Orderless: 提供灵活的补全匹配方式，支持模糊搜索
-;; Orderless: 提供灵活的模糊补全功能
 (use-package orderless
   :load-path "~/.emacs.d/site-lisp/orderless"
   :custom
-  ;; 设置补全风格为orderless和basic
   (completion-styles '(orderless basic))
-  ;; 文件补全使用basic风格以确保部分匹配
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
-;; Marginalia: 为补全候选项提供丰富的注解信息
 (use-package marginalia
   :load-path "~/.emacs.d/site-lisp/marginalia"
   :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))  ; 使用M-A循环切换注解详细程度
+         ("M-A" . marginalia-cycle))
   :init
   (require 'marginalia)
   (marginalia-mode))
 
 (use-package dired-sidebar
-  :load-path "~/.emacs.d/site-lisp/dired-sidebar"  ; 指定插件加载路径
-  :bind ("C-c t s" . dired-sidebar-toggle-sidebar)  ; 绑定快捷键C-c t s来切换侧边栏
-  :commands (dired-sidebar-toggle-sidebar)  ; 定义命令
+  :load-path "~/.emacs.d/site-lisp/dired-sidebar"
+  :bind ("C-c t s" . dired-sidebar-toggle-sidebar) ; 快捷键: C-c t s 切换侧边栏
+  :commands (dired-sidebar-toggle-sidebar)
   :init
-  (add-hook 'dired-sidebar-mode-hook  ; 设置模式钩子
+  (add-hook 'dired-sidebar-mode-hook
             (lambda ()
-              (unless (file-remote-p default-directory)  ; 非远程目录时
-                (auto-revert-mode))))  ; 启用自动刷新
+              (unless (file-remote-p default-directory)
+                (auto-revert-mode)))) ; 自动刷新本地目录
   :config
-  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)  ; 添加窗口分割命令到隐藏列表
-  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)  ; 添加窗口旋转命令到隐藏列表
+  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
   
-  (setq dired-sidebar-subtree-line-prefix "__")  ; 设置子目录前缀线
-  (setq dired-sidebar-theme 'vscode)  ; 使用VSCode风格主题
-  (setq dired-sidebar-use-term-integration t)  ; 启用终端集成
-  (setq dired-sidebar-use-custom-font t))  ; 使用自定义字体
+  (setq dired-sidebar-subtree-line-prefix "__") ; 子目录前缀
+  (setq dired-sidebar-theme 'vscode) ; 使用VSCode风格主题
+  (setq dired-sidebar-use-term-integration t) ; 终端集成
+  (setq dired-sidebar-use-custom-font t)) ; 使用自定义字体
 
+;; 提供类似VSCode的文件图标显示功能
 (use-package vscode-icon
-  :load-path "~/.emacs.d/site-lisp/vscode-icon-emacs"
-  :commands (vscode-icon-for-file)
+  :load-path "~/.emacs.d/site-lisp/vscode-icon-emacs"  ; 指定包加载路径
+  :commands (vscode-icon-for-file)                     ; 提供的主要命令
   :config
-  (setq vscode-icon-size 24))
+  (setq vscode-icon-size 24))                          ; 设置图标大小
 
 (use-package org
-  :ensure nil ;; Use the built-in Org package
+  :ensure nil ;; 使用内置的Org包
   :config
-  ;; Beautify Org Mode
-  (setq org-ellipsis " ▾ ") 
-  (setq org-hide-emphasis-markers t)
-  ;; Indentation and folding on startup
-  (setq org-startup-indented t)
-  (setq org-indent-mode-turns-on-hiding-stars t)
-  ;; Fontification
-  (custom-set-faces
-   '(org-level-1 ((t (:inherit outline-1 :height 1.3))))
-   '(org-level-2 ((t (:inherit outline-2 :height 1.2))))
-   '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
-   '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
-   '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
+  ;; 美化Org模式
+  (setq org-ellipsis " ▾ ") ; 设置折叠标记为▾符号
+  (setq org-hide-emphasis-markers t) ; 隐藏*、/等强调标记
   
-  ;; Indentation and folding
-  (setq org-indent-indentation-per-level 2))
+  ;; 缩进和折叠设置
+  (setq org-startup-indented t) ; 启动时启用缩进
+  (setq org-indent-mode-turns-on-hiding-stars t) ; 缩进模式时隐藏标题星号
+  
+  ;; 字体和标题样式
+  (custom-set-faces
+   '(org-level-1 ((t (:inherit outline-1 :height 1.3)))) ; 一级标题字体大小1.3倍
+   '(org-level-2 ((t (:inherit outline-2 :height 1.2)))) ; 二级标题字体大小1.2倍
+   '(org-level-3 ((t (:inherit outline-3 :height 1.1)))) ; 三级标题字体大小1.1倍
+   '(org-level-4 ((t (:inherit outline-4 :height 1.0)))) ; 四级标题默认大小
+   '(org-level-5 ((t (:inherit outline-5 :height 1.0))))) ; 五级标题默认大小
+  
+  ;; 缩进设置
+  (setq org-indent-indentation-per-level 2)) ; 每级标题缩进2个空格
 
 (use-package org-id
   :after org
   :ensure nil
   :config
-  (setq org-id-method 'ts)
-  (setq org-id-track-globally t)
-  (setq org-id-locations-file "~/.emacs.d/.org-id-locations"))
+  (setq org-id-method 'ts)  ; 使用时间戳作为ID生成方法
+  (setq org-id-track-globally t)  ; 全局跟踪所有Org文件的ID
+  (setq org-id-locations-file "~/.emacs.d/.org-id-locations"))  ; 存储ID位置的文件路径
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -163,17 +155,17 @@
 (add-hook 'after-save-hook 'tangle-config-org)
 
 (use-package pdf-occur
-    :commands (pdf-occur-global-minor-mode))
+    :commands (pdf-occur-global-minor-mode))  ; 提供PDF全文搜索功能
   (use-package pdf-history
-    :commands (pdf-history-minor-mode))
+    :commands (pdf-history-minor-mode))  ; 记录PDF浏览历史
   (use-package pdf-links
-    :commands (pdf-links-minor-mode))
+    :commands (pdf-links-minor-mode))  ; 处理PDF内部链接
   (use-package pdf-outline
-    :commands (pdf-outline-minor-mode))
+    :commands (pdf-outline-minor-mode))  ; 显示PDF大纲导航
   (use-package pdf-annot
-    :commands (pdf-annot-minor-mode))
+    :commands (pdf-annot-minor-mode))  ; 支持PDF批注功能
   (use-package pdf-sync
-    :commands (pdf-sync-minor-mode))
+    :commands (pdf-sync-minor-mode))  ; 同步PDF与文本位置
 
 (use-package tablist
   :load-path "~/.emacs.d/site-lisp/tablist")
@@ -245,6 +237,12 @@
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t)
+  (add-to-list 'display-buffer-alist
+             '("\\*org-roam\\*"
+               (display-buffer-in-direction)
+               (direction . right)
+               (window-width . 0.15)
+               (window-height . fit-window-to-buffer)))
   
   (unless (file-exists-p org-roam-directory)
     (make-directory org-roam-directory t))

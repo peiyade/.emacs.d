@@ -167,24 +167,26 @@
 ** Basic Org Settings
 #+begin_src emacs-lisp
 (use-package org
-  :ensure nil ;; Use the built-in Org package
+  :ensure nil ;; 使用内置的Org包
   :config
-  ;; Beautify Org Mode
-  (setq org-ellipsis " ▾ ") 
-  (setq org-hide-emphasis-markers t)
-  ;; Indentation and folding on startup
-  (setq org-startup-indented t)
-  (setq org-indent-mode-turns-on-hiding-stars t)
-  ;; Fontification
-  (custom-set-faces
-   '(org-level-1 ((t (:inherit outline-1 :height 1.3))))
-   '(org-level-2 ((t (:inherit outline-2 :height 1.2))))
-   '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
-   '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
-   '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
+  ;; 美化Org模式
+  (setq org-ellipsis " ▾ ") ; 设置折叠标记为▾符号
+  (setq org-hide-emphasis-markers t) ; 隐藏*、/等强调标记
   
-  ;; Indentation and folding
-  (setq org-indent-indentation-per-level 2))
+  ;; 缩进和折叠设置
+  (setq org-startup-indented t) ; 启动时启用缩进
+  (setq org-indent-mode-turns-on-hiding-stars t) ; 缩进模式时隐藏标题星号
+  
+  ;; 字体和标题样式
+  (custom-set-faces
+   '(org-level-1 ((t (:inherit outline-1 :height 1.3)))) ; 一级标题字体大小1.3倍
+   '(org-level-2 ((t (:inherit outline-2 :height 1.2)))) ; 二级标题字体大小1.2倍
+   '(org-level-3 ((t (:inherit outline-3 :height 1.1)))) ; 三级标题字体大小1.1倍
+   '(org-level-4 ((t (:inherit outline-4 :height 1.0)))) ; 四级标题默认大小
+   '(org-level-5 ((t (:inherit outline-5 :height 1.0))))) ; 五级标题默认大小
+  
+  ;; 缩进设置
+  (setq org-indent-indentation-per-level 2)) ; 每级标题缩进2个空格
 #+end_src
 
 ** Org ID Configuration
@@ -193,9 +195,9 @@
   :after org
   :ensure nil
   :config
-  (setq org-id-method 'ts)
-  (setq org-id-track-globally t)
-  (setq org-id-locations-file "~/.emacs.d/.org-id-locations"))
+  (setq org-id-method 'ts)  ; 使用时间戳作为ID生成方法
+  (setq org-id-track-globally t)  ; 全局跟踪所有Org文件的ID
+  (setq org-id-locations-file "~/.emacs.d/.org-id-locations"))  ; 存储ID位置的文件路径
 #+end_src
 
 ** Org Babel
@@ -219,19 +221,23 @@
 
 * PDF Tools
 ** PDF Tools Packages
+| M-s o 进行pdf 全文搜索| l pdf-history-forward | r pdf-history-backward | o pdf-minor | 
+
+TODO 让pdf搜索和pdf大纲的显示都在左边显示, 宽度稍微小一点
+TODO 用consult来进行pdf的搜索和大纲跳转, 让阅读更方便一些
 #+begin_src emacs-lisp
 (use-package pdf-occur
-    :commands (pdf-occur-global-minor-mode))
+    :commands (pdf-occur-global-minor-mode))  ; 提供PDF全文搜索功能
   (use-package pdf-history
-    :commands (pdf-history-minor-mode))
+    :commands (pdf-history-minor-mode))  ; 记录PDF浏览历史
   (use-package pdf-links
-    :commands (pdf-links-minor-mode))
+    :commands (pdf-links-minor-mode))  ; 处理PDF内部链接
   (use-package pdf-outline
-    :commands (pdf-outline-minor-mode))
+    :commands (pdf-outline-minor-mode))  ; 显示PDF大纲导航
   (use-package pdf-annot
-    :commands (pdf-annot-minor-mode))
+    :commands (pdf-annot-minor-mode))  ; 支持PDF批注功能
   (use-package pdf-sync
-    :commands (pdf-sync-minor-mode))
+    :commands (pdf-sync-minor-mode))  ; 同步PDF与文本位置
 
 (use-package tablist
   :load-path "~/.emacs.d/site-lisp/tablist")
@@ -312,6 +318,12 @@
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t)
+  (add-to-list 'display-buffer-alist
+             '("\\*org-roam\\*"
+               (display-buffer-in-direction)
+               (direction . right)
+               (window-width . 0.15)
+               (window-height . fit-window-to-buffer)))
   
   (unless (file-exists-p org-roam-directory)
     (make-directory org-roam-directory t))
