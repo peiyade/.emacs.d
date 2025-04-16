@@ -112,3 +112,21 @@
 [submodule "site-lisp/--force"]
 	path = site-lisp/--force
 	url = https://depp.brause.cc/eyebrowse.git
+[submodule "site-lisp/magit"]
+	path = site-lisp/magit
+	url = https://github.com/magit/magit.git
+[submodule "site-lisp/llama"]
+	path = site-lisp/llama
+	url = https://github.com/tarsius/llama.git
+[submodule "site-lisp/emacsql"]
+	path = site-lisp/emacsql
+	url = https://github.com/magit/emacsql.git
+[submodule "site-lisp/emacs-web-server"]
+	path = site-lisp/emacs-web-server
+	url = https://github.com/skeeto/emacs-web-server.git
+[submodule "site-lisp/with-editor"]
+	path = site-lisp/with-editor
+	url = https://github.com/magit/with-editor.git
+[submodule "site-lisp/transient"]
+	path = site-lisp/transient
+	url = https://github.com/magit/transient.git
