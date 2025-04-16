@@ -281,6 +281,9 @@ TODO 用consult来进行pdf的搜索和大纲跳转, 让阅读更方便一些
   :custom
   (org-roam-directory (file-truename "~/org-roam"))
   (org-roam-completion-everywhere t)
+  (org-roam-node-display-template
+   (concat "${title:*} "
+           (propertize "${tags:10}" 'face 'org-tag)))
   (org-roam-capture-templates
    '(("d" "默认" plain
       "%?" :target

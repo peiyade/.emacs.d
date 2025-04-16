@@ -200,6 +200,9 @@
   :custom
   (org-roam-directory (file-truename "~/org-roam"))
   (org-roam-completion-everywhere t)
+  (org-roam-node-display-template
+   (concat "${title:*} "
+           (propertize "${tags:10}" 'face 'org-tag)))
   (org-roam-capture-templates
    '(("d" "默认" plain
       "%?" :target
