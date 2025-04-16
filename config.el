@@ -11,75 +11,109 @@
 ;; 禁用后可增加编辑区域宽度，Emacs提供其他导航方式如键盘滚动
 (scroll-bar-mode -1)
 
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
-(setq default-frame-alist '((fullscreen . maximized)))
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))  ; 将初始帧设置为最大化状态
+;; `initial-frame-alist' 是一个列表，包含Emacs启动时第一个窗口的初始参数
+;; 这里添加 '(fullscreen . maximized) 表示窗口初始状态为最大化
+;; 在macOS系统上，这会使Emacs窗口占据整个屏幕
 
+(setq default-frame-alist '((fullscreen . maximized)))  ; 设置所有后续创建的帧的默认参数
+;; `default-frame-alist' 定义所有新创建窗口的默认参数
+;; 这里设置为最大化状态，确保后续创建的任何窗口都会最大化显示
+
+;; 设置Emacs优先使用UTF-8编码系统
 (prefer-coding-system 'utf-8)
+;; 设置默认编码系统为UTF-8，影响新创建的缓冲区
 (set-default-coding-systems 'utf-8)
+;; 设置终端编码为UTF-8，确保终端显示正确
 (set-terminal-coding-system 'utf-8)
+;; 设置键盘输入编码为UTF-8，保证输入字符正确处理
 (set-keyboard-coding-system 'utf-8)
 
+;; 设置备份文件存储目录
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+;; 设置自动保存文件存储位置
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
 
+;; 递归添加site-lisp目录及其子目录到加载路径
+;; 使Emacs能够找到这些目录中的Lisp文件
 (let ((default-directory "~/.emacs.d/site-lisp/"))
   (normal-top-level-add-subdirs-to-load-path))
 
+;; 加载use-package模块并设置基本参数
 (require 'use-package)
+;; 禁用自动确保包安装功能
 (setq use-package-always-ensure nil)
+;; 添加use-package到加载路径
 (add-to-list 'load-path "~/.emacs.d/site-lisp/use-package")
+;; 再次加载以确保可用
 (require 'use-package)
 
+;; 配置info文档路径以便查看帮助文档
 (with-eval-after-load 'info
   (info-initialize)
   (add-to-list 'Info-directory-list
                "~/.emacs.d/site-lisp/use-package/"))
 
+;; Vertico: 提供现代化的垂直补全界面
 (use-package vertico
   :load-path "~/.emacs.d/site-lisp/vertico"
   :init
   (require 'vertico)
   (vertico-mode))
 
+;; Consult: 增强搜索功能，提供更智能的查找命令
+;; C-s: 行内搜索 | C-r: 历史记录 | M-y: 粘贴历史 | C-x b: 缓冲区切换 | C-c f: 文件查找
+;; TODO 无法处理 C-c f 不是find-file的状态
 (use-package consult
   :load-path "~/.emacs.d/site-lisp/consult"
   :bind (("C-s" . consult-line)
-         ("C-r". consult-history)
-         ("M-y". consult-yank-pop)
-         ("C-x b". consult-buffer)
-         ("C-c f" . consult-find)))
+         ;;("C-r". consult-history)
+         ("M-y" . consult-yank-pop)
+         ("C-x b" . consult-buffer)
+         ("C-c f" . consult-find))
+  :config
+  (global-unset-key (kbd "C-c f"))
+  (global-set-key (kbd "C-c f") 'consult-find)
+  )
 
+
+
+;; Orderless: 提供灵活的补全匹配方式，支持模糊搜索
+;; Orderless: 提供灵活的模糊补全功能
 (use-package orderless
   :load-path "~/.emacs.d/site-lisp/orderless"
   :custom
+  ;; 设置补全风格为orderless和basic
   (completion-styles '(orderless basic))
+  ;; 文件补全使用basic风格以确保部分匹配
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
+;; Marginalia: 为补全候选项提供丰富的注解信息
 (use-package marginalia
   :load-path "~/.emacs.d/site-lisp/marginalia"
   :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
+         ("M-A" . marginalia-cycle))  ; 使用M-A循环切换注解详细程度
   :init
   (require 'marginalia)
   (marginalia-mode))
 
 (use-package dired-sidebar
-  :load-path "~/.emacs.d/site-lisp/dired-sidebar"
-  :bind ("C-c t s" . dired-sidebar-toggle-sidebar)
-  :commands (dired-sidebar-toggle-sidebar)
+  :load-path "~/.emacs.d/site-lisp/dired-sidebar"  ; 指定插件加载路径
+  :bind ("C-c t s" . dired-sidebar-toggle-sidebar)  ; 绑定快捷键C-c t s来切换侧边栏
+  :commands (dired-sidebar-toggle-sidebar)  ; 定义命令
   :init
-  (add-hook 'dired-sidebar-mode-hook
+  (add-hook 'dired-sidebar-mode-hook  ; 设置模式钩子
             (lambda ()
-              (unless (file-remote-p default-directory)
-                (auto-revert-mode))))
+              (unless (file-remote-p default-directory)  ; 非远程目录时
+                (auto-revert-mode))))  ; 启用自动刷新
   :config
-  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
-  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)  ; 添加窗口分割命令到隐藏列表
+  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)  ; 添加窗口旋转命令到隐藏列表
   
-  (setq dired-sidebar-subtree-line-prefix "__")
-  (setq dired-sidebar-theme 'vscode)
-  (setq dired-sidebar-use-term-integration t)
-  (setq dired-sidebar-use-custom-font t))
+  (setq dired-sidebar-subtree-line-prefix "__")  ; 设置子目录前缀线
+  (setq dired-sidebar-theme 'vscode)  ; 使用VSCode风格主题
+  (setq dired-sidebar-use-term-integration t)  ; 启用终端集成
+  (setq dired-sidebar-use-custom-font t))  ; 使用自定义字体
 
 (use-package vscode-icon
   :load-path "~/.emacs.d/site-lisp/vscode-icon-emacs"
