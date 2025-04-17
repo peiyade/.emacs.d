@@ -130,3 +130,6 @@
 [submodule "site-lisp/transient"]
 	path = site-lisp/transient
 	url = https://github.com/magit/transient.git
+[submodule "site-lisp/org-review"]
+	path = site-lisp/org-review
+	url = https://github.com/brabalan/org-review.git
